@@ -230,8 +230,12 @@ if __name__ == "__main__":
 	ax=plt.subplot(111)
 	ax.set_xscale('log')
 	ax.set_yscale('log')
+	ax.set_ylabel(r'$P(k)$', size=30)
+	ax.set_xlabel(r'$k$', size=30)
 	
-	ax.plot(k,P) 
-	ax.plot(k,P_spt)
+	ax.plot(k,P, label='linear power') 
+	ax.plot(k,P_spt, label='one-loop' )
+	
+	plt.legend(loc=2) 
 	plt.grid()
 	plt.show()
