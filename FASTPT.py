@@ -139,7 +139,7 @@ class FASTPT:
 		# more "like" a periodic signal 
 		
 			if (self.verbose):
-				print 'windowing biased power spectrum'
+				print('windowing biased power spectrum')
 			W=p_window(self.k,P_window[0],P_window[1])
 			P_b=P_b*W 
 	
@@ -151,7 +151,7 @@ class FASTPT:
 			# window the Fourier coefficients. 
 			# This will damping the highest frequencies 
 			if (self.verbose):
-				print 'windowing the Fourier coefficients'
+				print('windowing the Fourier coefficients')
 			c_m=c_m*c_window(self.m,int(C_window*self.N/2.)) 
 	
 		A_out=np.zeros((self.p_size,self.k_size))
@@ -222,7 +222,7 @@ if __name__ == "__main__":
 	t1=time()	
 	P_spt=fastpt.one_loop(P,P_window=P_window,C_window=C_window) 
 	t2=time()
-	print 'time', t2-t1 
+	print('time'), t2-t1 
 	
 	
 	import matplotlib.pyplot as plt
