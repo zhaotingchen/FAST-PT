@@ -1,5 +1,5 @@
 # 1-loop power spectrum calculated using an adaptive grid method
-# The linear power spectrum was generated using CAMB for Planck 2015 cosmology
+# The linear power spectrum was generated using CAMB with Planck 2015 cosmology
 # 0 : k (wavevector)
 # 1 : linear power spectrum
 # 2 : P_22
