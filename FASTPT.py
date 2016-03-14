@@ -30,7 +30,7 @@ class FASTPT:
 		
 		delta_L=(log(np.max(k))-log(np.min(k)))/(k.size-1)   # need to put in a check to make sure that it is log sampled 
 		
-		if(n_pad !=0):
+		if(n_pad !=None):
 			self.id_pad=np.arange(k.size)+n_pad
 			d_logk=delta_L 
 			k_pad=np.log10(k[0])-np.arange(1,n_pad+1)*d_logk
@@ -40,7 +40,15 @@ class FASTPT:
 			k_pad=np.log10(k[-1])+np.arange(1,n_pad+1)*d_logk
 			k_right=10**k_pad
 			k=np.hstack((k_left,k,k_right))
+			
+			if (n_pad < 2): 
+				print('Your results are only good for k > 2k_min')
+						
 	
+		if(n_pad == None): 
+			print('Your results are only good for k > 2k_min')
+		
+			
 		# default parameters for standard P_22_reg
 		if param_mat==None:
 			param_mat=np.array([[0,0,0,0],[0,0,2,0],[0,0,4,0],[2,-2,2,0],\
