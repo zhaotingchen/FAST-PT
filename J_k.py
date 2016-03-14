@@ -31,12 +31,12 @@ def check_conjugate(A):
 	n=A.size
 	
 	for i in range(n/2):
-		print 'frequency indices',  -n/2 + 1+ i, n/2-i
-		print ' values', A[i], A[-i-1]
-		print 'sum of imaginary part', np.imag(A[i] + A[-i-1])
+		print('frequency indices'),  -n/2 + 1+ i, n/2-i
+		print('values'), A[i], A[-i-1]
+		print('sum of imaginary part'), np.imag(A[i] + A[-i-1])
 		x=A[i] + A[-i-1]
-		print 'should be zero', np.imag(x) 
-	print 'the zero frequency at ', n/2, '=', A[n/2], 
+		print('should be zero'), np.imag(x) 
+	print('the zero frequency at '), n/2, '=', A[n/2], 
 	return 1 
 	
 def J_k(k,P,param_matrix,nu=-2,P2=None,P_window=None, C_window=None,n_pad=500,verbose=False):
@@ -62,7 +62,7 @@ def J_k(k,P,param_matrix,nu=-2,P2=None,P_window=None, C_window=None,n_pad=500,ve
 		# more "like" a periodic signal 
 		
 		if (verbose):
-			print 'smoothing biased power spectrum'
+			print('smoothing biased power spectrum')
 		W=p_window(k,P_window[0],P_window[1])
 		P_b=P_b*W 
 	
@@ -70,7 +70,7 @@ def J_k(k,P,param_matrix,nu=-2,P2=None,P_window=None, C_window=None,n_pad=500,ve
 		# pad the edges. This helps with edge effects in Fourier space
 		
 		if (verbose):	
-			print 'padding the input signal with', n_pad, 'zeros.'
+			print('padding the input signal with'), n_pad, 'zeros.'
 		id_pad=np.arange(k.size)	
 		k,P_b=pad_left(k,P_b,n_pad)	
 		_,P=pad_left(k,P,n_pad)	
@@ -106,7 +106,7 @@ def J_k(k,P,param_matrix,nu=-2,P2=None,P_window=None, C_window=None,n_pad=500,ve
 		# window the Fourier coefficients. 
 		# This will damping the highest frequencies 
 		if (verbose):
-			print 'smoothing the Fourier coefficients'
+			print('smoothing the Fourier coefficients')
 		c_m=c_m*c_window(m,int(C_window*N/2.)) 
 		
 	# matrix for output 
