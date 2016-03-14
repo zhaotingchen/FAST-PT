@@ -19,7 +19,6 @@ from scipy.signal import convolve
 from gamma_funcs import g_m_vals, gamsn
 
 
-
 log2=log(2.)
 class FASTPT:
 	
@@ -207,24 +206,37 @@ class FASTPT:
 
 if __name__ == "__main__":
 
-	d=np.loadtxt('Pk_Planck15.dat')
+	# load the data file 
+	d=np.loadtxt('Pk_Planck15.dat') 
+	# declare k and the power spectrum 
 	k=d[:,0]; P=d[:,1]
+	
+	# set the parameters for the power spectrum window and
+	# Fourier coefficient window 
 	P_window=np.array([.2,.2])  
 	C_window=.65	
 
+	# one-loop alpha beta matrix. No longer needed as it is hard
+	# coded into FASTPT
 	#param_matrix=np.array([[0,0,0,0],[0,0,2,0],[0,0,4,0],[2,-2,2,0],\
 	#						[1,-1,1,0],[1,-1,3,0],[2,-2,0,1] ])
 	
+	# bias parameter and padding length 
 	nu=-2; n_pad=800		
 	from time import time
-				
+		
+	# initialize the FASTPT class		
 	fastpt=FASTPT(k,nu,n_pad=n_pad) 
+	
+	
 	t1=time()	
+	# get the one-loop power spectrum 
 	P_spt=fastpt.one_loop(P,P_window=P_window,C_window=C_window) 
 	t2=time()
 	print('time'), t2-t1 
 	
 	
+	# make a plot 
 	import matplotlib.pyplot as plt
 	
 	ax=plt.subplot(111)
