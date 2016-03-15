@@ -8,7 +8,7 @@ FAST-PT way to get started:
 
 * Make sure you have current numpy, scipy, and matplotlib
 * download
-* in terminal type 
+* in terminal type the following 
 * python FASTPT.py
 * (hopefully you get a plot)
 
