@@ -1,7 +1,7 @@
 # FAST-PT
 
 FASTPT is code to calculate 1-loop corrections to the matter power spectrum in cosmology. 
-The code utilizes Fourier Methods combined with analytic expressions to reduce the computation time down 
+The code utilizes Fourier methods combined with analytic expressions to reduce the computation time down 
 to scale as N log N, where N is the number of grid point in the input linear power spectrum. 
 
 FAST-PT way to get started: 
