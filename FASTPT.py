@@ -1,10 +1,19 @@
-''' This is the backbone to FAST-PT. 
-	The FASTPT can be used to calculate P_{1-loop}(k) 
-	or other similar integrals.
+''' 
+	FASTPT is a numerical algorithm to calculate 
+	1-loop contributions to the matter power spectrum or other 
+	similar type integrals. 
+	The method is presented in the paper 2016arXiv160304826M.
+	Please cite this paper if you are using FASTPT
+	
 	
 	J. E. McEwen (c) 2016 
 	mcewen.24@osu.edu 
+	
+	The FASTPT class is the workhose of the FASTPT algorithm. 
+	This class calculates integrals of the form 
+	\int \frac{d^3q}{(2 \pi)^3} K(q,k-q) P(q) P(|k-q|) 
 '''
+
 
 
 import numpy as np
