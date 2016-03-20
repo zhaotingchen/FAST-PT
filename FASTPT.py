@@ -134,13 +134,21 @@ class FASTPT:
 			self.h_l[i,:]=gamsn(self.p[i]+1-1j*self.tau_l)
 	
 	def J_k(self,P,P_window=None,C_window=None):
+			
+		if P_window is None:
+			p_window_truth=False
+		else:
+			p_window_truth=True
 		
 		if (self.n_pad !=0): 
 			P=np.pad(P, pad_width=(self.n_pad,self.n_pad), mode='constant', constant_values=0)
 				
 		P_b=P*self.k**(-self.nu)
 		
-		if (P_window != None):
+		#if (P_window != None):
+		# I changed the conditional, newer versions of numpy will return a FutureWarning for 
+		# element wise comparison to Non
+		if (p_window_truth):
 		# window the input power spectrum, so that at high and low k
 		# the signal smoothly tappers to zero. This make the input
 		# more "like" a periodic signal 
@@ -157,6 +165,7 @@ class FASTPT:
 		if (C_window != None):
 			# window the Fourier coefficients. 
 			# This will damping the highest frequencies 
+			
 			if (self.verbose):
 				print('windowing the Fourier coefficients')
 			c_m=c_m*c_window(self.m,int(C_window*self.N/2.)) 
@@ -230,7 +239,8 @@ if __name__ == "__main__":
 	#						[1,-1,1,0],[1,-1,3,0],[2,-2,0,1] ])
 	
 	# bias parameter and padding length 
-	nu=-2; n_pad=800		
+	nu=-2; n_pad=800	
+
 	from time import time
 		
 	# initialize the FASTPT class		
