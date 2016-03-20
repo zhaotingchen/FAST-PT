@@ -135,11 +135,7 @@ class FASTPT:
 	
 	def J_k(self,P,P_window=None,C_window=None):
 			
-		if P_window is None:
-			p_window_truth=False
-		else:
-			p_window_truth=True
-		
+	
 		if (self.n_pad !=0): 
 			P=np.pad(P, pad_width=(self.n_pad,self.n_pad), mode='constant', constant_values=0)
 				
@@ -148,7 +144,8 @@ class FASTPT:
 		#if (P_window != None):
 		# I changed the conditional, newer versions of numpy will return a FutureWarning for 
 		# element wise comparison to Non
-		if (p_window_truth):
+		#if (p_window_truth):
+		if P_window is not None:
 		# window the input power spectrum, so that at high and low k
 		# the signal smoothly tappers to zero. This make the input
 		# more "like" a periodic signal 
