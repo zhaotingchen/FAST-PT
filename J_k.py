@@ -6,7 +6,7 @@
 	
 	J. E. McEwen (c) 2016
 ''' 
-
+from __future__ import division 
 import numpy as np
 from numpy.fft import fft, ifft , rfft, irfft , fftfreq
 from numpy import exp, log, log10, cos, sin, pi, cosh, sinh , sqrt
@@ -98,7 +98,7 @@ def J_k(k,P,param_matrix,nu=-2,P2=None,P_window=None, C_window=None,n_pad=500,ve
 		
 	# define l and tau_l
 	n_l=c_m.size + c_m.size - 1
-	l=l=np.arange(-n_l/2+1,n_l/2+1)
+	l=l=np.arange(-n_l//2+1,n_l//2+1)
 	tau_l=omega*l
 	
 	
@@ -107,7 +107,7 @@ def J_k(k,P,param_matrix,nu=-2,P2=None,P_window=None, C_window=None,n_pad=500,ve
 		# This will damping the highest frequencies 
 		if (verbose):
 			print('smoothing the Fourier coefficients')
-		c_m=c_m*c_window(m,int(C_window*N/2.)) 
+		c_m=c_m*c_window(m,int(C_window*N//2.)) 
 		
 	# matrix for output 
 	A_out=np.zeros((param_matrix.shape[0],k.size))

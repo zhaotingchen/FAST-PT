@@ -13,7 +13,7 @@
 	This class calculates integrals of the form 
 	\int \frac{d^3q}{(2 \pi)^3} K(q,k-q) P(q) P(|k-q|) 
 '''
-
+from __future__ import division 
 
 
 import numpy as np
@@ -26,6 +26,7 @@ from fastpt_extr import p_window, c_window, pad_left, pad_right
 from matter_power_spt import P_13_reg 
 from scipy.signal import convolve 
 from gamma_funcs import g_m_vals, gamsn
+
 
 
 log2=log(2.)
@@ -81,13 +82,13 @@ class FASTPT:
 		
 		# define eta_m and eta_n=eta_m
 		omega=2*pi/(float(self.N)*delta_L)
-		self.m=np.arange(-self.N/2,self.N/2+1) 
+		self.m=np.arange(-self.N//2,self.N//2+1) 
 		self.eta_m=omega*self.m
 		
 		
 		# define l and tau_l
 		self.n_l=self.m.size + self.m.size - 1
-		self.l=np.arange(-self.n_l/2+1,self.n_l/2+1)
+		self.l=np.arange(-self.n_l//2+1,self.n_l//2+1)
 		self.tau_l=omega*self.l
 		
 		#Q_m=np.zeros((param_mat.shape[0],self.N+1), dtype=complex) 
@@ -174,7 +175,7 @@ class FASTPT:
 			
 			if (self.verbose):
 				print('windowing the Fourier coefficients')
-			c_m=c_m*c_window(self.m,int(C_window*self.N/2.)) 
+			c_m=c_m*c_window(self.m,int(C_window*self.N//2.)) 
 	
 		A_out=np.zeros((self.p_size,self.k_size))
 		for i in range(self.p_size):
