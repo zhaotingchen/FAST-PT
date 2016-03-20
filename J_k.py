@@ -56,7 +56,7 @@ def J_k(k,P,param_matrix,nu=-2,P2=None,P_window=None, C_window=None,n_pad=500,ve
 	
 	P_b=P*k**(-nu)
 	
-	if (P_window != None):
+	if P_window is not None:
 		# window the input power spectrum, so that at high and low k
 		# the signal smoothly tappers to zero. This make the input
 		# more "like" a periodic signal 
