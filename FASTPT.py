@@ -4,8 +4,7 @@
 	similar type integrals. 
 	The method is presented in the paper 2016arXiv160304826M.
 	Please cite this paper if you are using FASTPT
-	
-	
+		
 	J. E. McEwen (c) 2016 
 	mcewen.24@osu.edu 
 	
@@ -144,26 +143,21 @@ class FASTPT:
 			self.h_l[i,:]=gamsn(self.p[i]+1-1j*self.tau_l)
 	
 	def J_k(self,P,P_window=None,C_window=None):
-			
-	
-		if (self.n_pad !=0): 
-			P=np.pad(P, pad_width=(self.n_pad,self.n_pad), mode='constant', constant_values=0)
-				
-		P_b=P*self.k**(-self.nu)
+							
+		P_b=P*self.k_old**(-self.nu)
 		
-		#if (P_window != None):
-		# I changed the conditional, newer versions of numpy will return a FutureWarning for 
-		# element wise comparison to Non
-		#if (p_window_truth):
 		if P_window is not None:
 		# window the input power spectrum, so that at high and low k
 		# the signal smoothly tappers to zero. This make the input
 		# more "like" a periodic signal 
-		
+			
 			if (self.verbose):
 				print('windowing biased power spectrum')
-			W=p_window(self.k,P_window[0],P_window[1])
+			W=p_window(self.k_old,P_window[0],P_window[1])
 			P_b=P_b*W 
+			
+		if (self.n_pad !=0): 
+			P_b=np.pad(P_b, pad_width=(self.n_pad,self.n_pad), mode='constant', constant_values=0)
 	
 		c_m_positive=rfft(P_b)
 		c_m_negative=np.conjugate(c_m_positive[1:])
@@ -184,8 +178,7 @@ class FASTPT:
 			# convolve f_c and g_c 
 			C_l=np.convolve(c_m*self.g_m[i,:],c_m*self.g_n[i,:])
 			#C_l=convolve(c_m*self.g_m[i,:],c_m*self.g_n[i,:])
-
-				
+	
 			# multiply all l terms together 
 			C_l=C_l*self.h_l[i,:]*self.two_part_l[i]
 		
@@ -195,8 +188,7 @@ class FASTPT:
 		
 			C_l=np.hstack((c_plus[:-1],c_minus))
 			A_k=ifft(C_l)*C_l.size # multiply by size to get rid of the normalization in ifft
-			
-		
+					
 			A_out[i,:]=np.real(A_k[::2])*self.pf[i]*self.k**(-self.p[i]-2) 
 			# note that you have to take every other element 
 			# in A_k, due to the extended array created from the
@@ -229,7 +221,9 @@ class FASTPT:
 		
 
 if __name__ == "__main__":
-
+	# An example script to run FASTPT and get the plot for
+	# P_22 + P_13 
+	
 	# load the data file 
 	d=np.loadtxt('Pk_Planck15.dat') 
 	# declare k and the power spectrum 
@@ -237,16 +231,12 @@ if __name__ == "__main__":
 	
 	# set the parameters for the power spectrum window and
 	# Fourier coefficient window 
-	P_window=np.array([.2,.2])  
-	C_window=.65	
-
-	# one-loop alpha beta matrix. No longer needed as it is hard
-	# coded into FASTPT
-	#param_matrix=np.array([[0,0,0,0],[0,0,2,0],[0,0,4,0],[2,-2,2,0],\
-	#						[1,-1,1,0],[1,-1,3,0],[2,-2,0,1] ])
+	#P_window=np.array([.2,.2])  
+	#P_window=np.array([0.01,.1])  
+	C_window=.75	
 	
 	# bias parameter and padding length 
-	nu=-2; n_pad=800	
+	nu=-2; n_pad=800
 
 	from time import time
 		
@@ -256,7 +246,10 @@ if __name__ == "__main__":
 	
 	t1=time()	
 	# get the one-loop power spectrum 
-	P_spt=fastpt.one_loop(P,P_window=P_window,C_window=C_window) 
+	# with P_windowing (make sure to uncomment P_window above if you are going to use) 
+	#P_spt=fastpt.one_loop(P,P_window=P_window,C_window=C_window) 
+	# with out P_windowing (better if you are using zero padding) 
+	P_spt=fastpt.one_loop(P,C_window=C_window) 
 	t2=time()
 	print('time'), t2-t1 
 	
@@ -271,7 +264,7 @@ if __name__ == "__main__":
 	ax.set_xlabel(r'$k$', size=30)
 	
 	ax.plot(k,P, label='linear power') 
-	ax.plot(k,P_spt, label='one-loop' )
+	ax.plot(k,P_spt, label=r'$P_{22}(k) + P_{13}(k)$' )
 	
 	plt.legend(loc=2) 
 	plt.grid()
