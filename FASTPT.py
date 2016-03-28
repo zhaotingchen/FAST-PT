@@ -59,7 +59,7 @@ class FASTPT:
 		
 			
 		# default parameters for standard P_22_reg
-		if param_mat==None:
+		if param_mat is None:
 			param_mat=np.array([[0,0,0,0],[0,0,2,0],[0,0,4,0],[2,-2,2,0],\
 							[1,-1,1,0],[1,-1,3,0],[2,-2,0,1] ])
 	
@@ -212,11 +212,12 @@ class FASTPT:
 		F=8/35.*mat[5,:]
 		reg=1/3.*mat[6,:]
 	
-		return Power, 2*(A+B+C+D+E+F)+ reg
+		return Power, 2*(A+B+C+D+E+F) + reg
 		
 	def one_loop(self,P,P_window=None,C_window=None):
 		Ps,P22=self.P22(P,P_window,C_window)
-		P13=P_13_reg(self.k_old,Ps)  
+		P13=P_13_reg(self.k_old,Ps)
+		  
 		return P22+P13
 		
 
@@ -231,8 +232,7 @@ if __name__ == "__main__":
 	
 	# set the parameters for the power spectrum window and
 	# Fourier coefficient window 
-	#P_window=np.array([.2,.2])  
-	#P_window=np.array([0.01,.1])  
+	P_window=np.array([.2,.2])  
 	C_window=.75	
 	
 	# bias parameter and padding length 
@@ -245,9 +245,7 @@ if __name__ == "__main__":
 	
 	
 	t1=time()	
-	# get the one-loop power spectrum 
-	# with P_windowing (make sure to uncomment P_window above if you are going to use) 
-	#P_spt=fastpt.one_loop(P,P_window=P_window,C_window=C_window) 
+	
 	# with out P_windowing (better if you are using zero padding) 
 	P_spt=fastpt.one_loop(P,C_window=C_window) 
 	t2=time()

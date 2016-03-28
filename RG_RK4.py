@@ -38,9 +38,7 @@ def RG_RK4(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 	P_0=P*W
 	
 	nu=-2
-	spt_matrix=np.array([[0,0,0,0],[0,0,2,0],[0,0,4,0],[2,-2,2,0],\
-							[1,-1,1,0],[1,-1,3,0],[2,-2,0,1] ])
-	fastpt=FASTPT.FASTPT(k,nu,spt_matrix,n_pad=n_pad) 	
+	fastpt=FASTPT.FASTPT(k,nu,n_pad=n_pad) 	
 	P_spt=fastpt.one_loop(P_0,C_window=C_window) 
 	
 	# initial lambda 
