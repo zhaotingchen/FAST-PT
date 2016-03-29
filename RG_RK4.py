@@ -131,7 +131,10 @@ def RG_RK4(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 	
 if __name__ == "__main__":
 	
-	from ConfigParser import SafeConfigParser
+	if sys.version_info.major==2:
+		from ConfigParser import SafeConfigParser
+	if sys.version_info.major==3:
+		from configparser import SafeConfigParser
 	parser = SafeConfigParser()
  		
 	name='kmax1_example.ini'
