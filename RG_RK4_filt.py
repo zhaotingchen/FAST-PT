@@ -235,7 +235,7 @@ if __name__ == "__main__":
 	ax.plot(k,P, label='linear power') 
 	ax.plot(k,P_rg, label='RG' )
 	
-	plt.legend(loc=2) 
+	plt.legend(loc=3) 
 					
 	plt.grid()
 	plt.show()
