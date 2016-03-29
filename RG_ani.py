@@ -8,22 +8,27 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import sys 
 
 
 # load data here
-name=''
-save_name=''
-title=r''
+#name='data file to load'
+#save_name=' animation to save , must be a .mp4 extension'
+#title=r'what ever you like '
+name='RG_STS_001_kmax10_ds3.npy'
+save_name='test.mp4'
+title=r'test'
 d=np.load(name)
+
 k=d[0,:]
 P_0=d[1,:]
 # downsample if number of frames is large
-#downsample=20
-#d=d[::downsample,:]
+downsample=1
+d=d[3::downsample,:]
 N=d.shape[0]-1
 
 # start program 
-Lambda=0
+#Lambda=0
 
 def n_eff(k,P):
 	ln_P=np.log(P)
@@ -44,7 +49,6 @@ ax1.plot(k,P_0, color='black', label=r'$P_\star(\lambda=0)$')
 lambda_text=ax1.text(.05, .5, '', transform=ax1.transAxes, fontsize=40)
 
 line1, =ax1.plot([], [], color='red', label=r'$P_\star(\lambda + \delta \lambda)$') 
-
 
 plt.grid()			
 plt.legend(loc=3)
@@ -68,16 +72,13 @@ plt.grid()
 def init():
 	line1.set_data([],[]) 
 	line2.set_data([],[]) 
-	
-	
+		
 	return line1,line2
 
 def animate(i):
-
- 	
- 	
-	line1.set_data(k,d[i+2,:])
-	a,b=n_eff(k,d[i+2,:])
+	
+	line1.set_data(k,d[i,:])
+	a,b=n_eff(k,d[i,:])
 	line2.set_data(a,b)
 	
 	Lambda=d[i,0]

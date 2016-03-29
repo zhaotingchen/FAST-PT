@@ -23,7 +23,6 @@ def RG_RK4(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 	
 	#save name 
 	name='RG_RK4_'+name
-	N_steps=int(max/d_lambda)
 	# The spacing in log(k)
 	Delta=np.log(k[1])-np.log(k[0])
 	
@@ -44,7 +43,7 @@ def RG_RK4(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 	# initial lambda 
 	Lambda=0
 
-	d_out=np.zeros((N_steps+3,k.size+1))
+	d_out=np.zeros((3,k.size+1))
 	d_out[0,:]=np.append(Lambda,k)
 	d_out[1,:]=np.append(Lambda,P_0)
 	d_out[2,:]=np.append(Lambda,P_spt) 
@@ -88,28 +87,14 @@ def RG_RK4(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 		#update lambda and the iteration 
 		i=i+1
 		Lambda+=d_lambda
-		#print('lambda', Lambda	)
+		#print 'lambda', Lambda	
 		
 		# update data for saving 
 		d_update=np.append(Lambda,P)
 		d_out=np.row_stack((d_out,d_update))
-# 		
-#		if (i % 20 ==0):
-# 			# I like to save at every 20th iteration. You
-# 			# could turn this off if you like
-# 			print('this is the iteration', i)
-# 			print('this is Lambda', Lambda )
-# 			print('this is d_lambda', d_lambda)
-# 			print('this is time since start', time.time()-t1)
-# 			np.save(name,d_out)	
-# 		
-# 		# You could plot each step, or plot some downsample of steps here
-# 		# this is a good way to monitor instabilities 
-		if (i % 100 == 0 ): 
-			print('Lambda', Lambda) 
-# 		#if (i % 1 == 0 ): 
-		if (False):	
-# 			
+        # set to True to check at each step 
+		if (False):
+		
 			ax=plt.subplot(111)
 			ax.set_xscale('log')
 			ax.set_yscale('log')
@@ -125,18 +110,16 @@ def RG_RK4(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 	t2=time.time()
 	print('time to run seconds', t2-t1)
 	print('time to run minutes', (t2-t1)/60.)
+	print('number of iterations and output shape', i, d_out.shape)
 	np.save(name,d_out)	
 	# return last step 
 	return P 
 	
 if __name__ == "__main__":
 	
-	if sys.version_info.major==2:
-		from ConfigParser import SafeConfigParser
-	if sys.version_info.major>=3:
-		from configparser import SafeConfigParser
+	from ConfigParser import SafeConfigParser
 	parser = SafeConfigParser()
-		
+ 		
 	name='kmax1_example.ini'
 	
 	parser.read(name)
@@ -194,7 +177,7 @@ if __name__ == "__main__":
 	ax.plot(k,P, label='linear power') 
 	ax.plot(k,P_rg, label='RG' )
 	
-	plt.legend(loc=3) 
+	plt.legend(loc=2) 
 					
 	plt.grid()
 	plt.show()
