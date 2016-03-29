@@ -81,8 +81,8 @@ def RG_STS(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 			t_step=t_step+dt_j[j] 
 			
 		d_lambda=t_step 	
-		#print 'outer step', d_lambda 
-		#print ' Lambda', Lambda 
+		#print('outer step', d_lambda )
+		#print(' Lambda', Lambda )
 		#P=P+d_lambda*K 
 		
 		# check for failure. 
@@ -101,7 +101,7 @@ def RG_STS(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 		#update lambda and the iteration 
 		i=i+1
 		Lambda+=d_lambda
-		#print 'lambda', Lambda	
+		#print('lambda', Lambda	
 		
 		# update data for saving 
 		d_update=np.append(Lambda,P)
@@ -110,10 +110,10 @@ def RG_STS(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 #		if (i % 200 ==0):
 # 			# I like to save at every 20th iteration. You
 # 			# could turn this off if you like
-# 			print 'this is the iteration', i
-# 			print 'this is Lambda', Lambda 
-# 			print 'this is d_lambda', d_lambda
-# 			print 'this is time since start', time.time()-t1
+# 			print('this is the iteration', i)
+# 			print('this is Lambda', Lambda )
+# 			print('this is d_lambda', d_lambda)
+# 			print('this is time since start', time.time()-t1)
 # 			np.save(name,d_out)	
 # 		
 # 		# You could plot each step, or plot some downsample of steps here
@@ -155,12 +155,12 @@ if __name__ == "__main__":
 	
 
 	if sys.version_info.major==2:
-		from ConFigParser import SafeConfigParser
+		from ConfigParser import SafeConfigParser
 	if sys.version_info.major>=3:
 		from configparser import SafeConfigParser
 	parser = SafeConfigParser()
 	
-	#print 'enter name of ini file, without the .ini part '
+	#print('enter name of ini file, without the .ini part ')
 	#name=raw_input('file name? ')
 	#name=name+'.ini'
 	name='kmax10_example.ini'
