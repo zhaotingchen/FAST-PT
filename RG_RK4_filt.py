@@ -133,16 +133,16 @@ def RG_RK4_filt(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 		d_out=np.row_stack((d_out,d_update))
 		if(False):
 		
-		    ax=plt.subplot(111)
-		    ax.set_xscale('log')
-		    ax.set_yscale('log')
-		    ax.set_xlabel('k')
-		    
-		    ax.plot(k,P)
-		    ax.plot(k,P_0, color='red')
-		    
-		    plt.grid()
-		    plt.show()
+			ax=plt.subplot(111)
+			ax.set_xscale('log')
+			ax.set_yscale('log')
+			ax.set_xlabel('k')
+			
+			ax.plot(k,P)
+			ax.plot(k,P_0, color='red')
+			
+			plt.grid()
+			plt.show()
 		
 	# save the data 
 	t2=time.time()
@@ -153,76 +153,76 @@ def RG_RK4_filt(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 	return P 
 	
 if __name__ == "__main__":
-    
-    V=sys.version_info[0]
-    
-    if (V < 3):
-	    import ConfigParser as CP
-	    
-    if (V >=3 ):
-        import configparser as CP
-
-    parser = CP.SafeConfigParser()
-    
-    name='kmax10_example.ini'
 	
-    parser.read(name)
+	V=sys.version_info[0]
 	
-    k_max=parser.getfloat('floats', 'k_max')
-    k_min=parser.getfloat('floats', 'k_min')
-    step=parser.getfloat('floats', 'step')
-    max=parser.getfloat('floats', 'max')
-    P_right=parser.getfloat('floats', 'P_w_right')
-    P_left=parser.getfloat('floats', 'P_w_left')
-    C_window=parser.getfloat('floats', 'C_window')
-    n_pad=parser.getint('integers', 'n_pad')
-    down_sample=parser.getint('integers', 'down_sample')
-    read_name=parser.get('files', 'in_file')
-    name=parser.get('files', 'out_file')
-	
-	
-    d=np.loadtxt(read_name)	# load data
-    k=d[:,0]
-    P=d[:,1]
-
-    id=np.where( (k >= k_min) & (k <= k_max) )[0]
-    k=k[id]
-    P=P[id]
-    
-    k=k[::down_sample]
-    P=P[::down_sample]
-
-    # if your array is not even in size, FAST-PT will not work-
-    # trim if so. 
-    if (k.size % 2 != 0):
-        k=k[:-1]
-        P=P[:-1]
+	if (V < 3):
+		import ConfigParser as CP
 		
-    print('Details of run.')
-    print('save name :', name)
-    print('k min and max:', k_min, k_max )
-    print('step size : ', step)
-    print('grid size : ', k.size)
-    print('d log k: ', np.log(k[1])-np.log(k[0]) )
-    print('down sample factor:', down_sample)
-    P_window=np.array([P_left,P_right])  
+	if (V >=3 ):
+		import configparser as CP
+
+	parser = CP.SafeConfigParser()
+	
+	name='kmax10_example.ini'
+	
+	parser.read(name)
+	
+	k_max=parser.getfloat('floats', 'k_max')
+	k_min=parser.getfloat('floats', 'k_min')
+	step=parser.getfloat('floats', 'step')
+	max=parser.getfloat('floats', 'max')
+	P_right=parser.getfloat('floats', 'P_w_right')
+	P_left=parser.getfloat('floats', 'P_w_left')
+	C_window=parser.getfloat('floats', 'C_window')
+	n_pad=parser.getint('integers', 'n_pad')
+	down_sample=parser.getint('integers', 'down_sample')
+	read_name=parser.get('files', 'in_file')
+	name=parser.get('files', 'out_file')
+	
+	
+	d=np.loadtxt(read_name)	# load data
+	k=d[:,0]
+	P=d[:,1]
+
+	id=np.where( (k >= k_min) & (k <= k_max) )[0]
+	k=k[id]
+	P=P[id]
+	
+	k=k[::down_sample]
+	P=P[::down_sample]
+
+	# if your array is not even in size, FAST-PT will not work-
+	# trim if so. 
+	if (k.size % 2 != 0):
+		k=k[:-1]
+		P=P[:-1]
+		
+	print('Details of run.')
+	print('save name :', name)
+	print('k min and max:', k_min, k_max )
+	print('step size : ', step)
+	print('grid size : ', k.size)
+	print('d log k: ', np.log(k[1])-np.log(k[0]) )
+	print('down sample factor:', down_sample)
+	P_window=np.array([P_left,P_right])  
 	
 
-    P_rg=RG_RK4_filt(name,k,P,step,max,n_pad,P_window,C_window)	
+	P_rg=RG_RK4_filt(name,k,P,step,max,n_pad,P_window,C_window)	
 	
-    ax=plt.subplot(111)
-    ax.set_xscale('log')
-    ax.set_yscale('log')
-    ax.set_xlabel('k')
+	ax=plt.subplot(111)
+	ax.set_xscale('log')
+	ax.set_yscale('log')
+	ax.set_xlabel('k')
 	
-    ax.set_ylabel(r'$P(k)$', size=30)
-    ax.set_xlabel(r'$k$', size=30)
+	ax.set_ylabel(r'$P(k)$', size=30)
+	ax.set_xlabel(r'$k$', size=30)
 	
-    ax.plot(k,P, label='linear power') 
-    ax.plot(k,P_rg, label='RG' )
+	ax.plot(k,P, label='linear power') 
+	ax.plot(k,P_rg, label='RG' )
 	
-    plt.legend(loc=2) 
+	plt.legend(loc=2) 
 					
-    plt.grid()
-    plt.show()
+	plt.grid()
+	plt.show()
 	

@@ -92,7 +92,7 @@ def RG_RK4(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 		# update data for saving 
 		d_update=np.append(Lambda,P)
 		d_out=np.row_stack((d_out,d_update))
-        # set to True to check at each step 
+		# set to True to check at each step 
 		if (False):
 		
 			ax=plt.subplot(111)
@@ -117,9 +117,13 @@ def RG_RK4(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 	
 if __name__ == "__main__":
 	
-	from ConfigParser import SafeConfigParser
-	parser = SafeConfigParser()
- 		
+	V=sys.version_info[0]
+	if (V < 3):
+		import ConfigParser as CP
+	if (V >=3 ):
+		import configparser as CP 
+	parser = CP.SafeConfigParser()
+		
 	name='kmax1_example.ini'
 	
 	parser.read(name)

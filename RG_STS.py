@@ -80,21 +80,21 @@ def RG_STS(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 		
 		# check for failure. 
 		if (np.any(np.isnan(P))):
-			print 'RG flow has failed. It could be that you have not chosen a step size well.'
-			print 'You may want to consider a smaller step size.'
-			print 'iteration number and lambda', i, Lambda
+			print('RG flow has failed. It could be that you have not chosen a step size well.')
+			print('You may want to consider a smaller step size.')
+			print('iteration number and lambda', i, Lambda)
 			sys.exit()
 			
 		if (np.any(np.isinf(P))):
-			print 'RG flow has failed. It could be that you have not chosen a step size well.'
-			print 'You may want to consider a smaller step size.'
-			print 'iteration number and lambda', i, Lambda
+			print('RG flow has failed. It could be that you have not chosen a step size well.')
+			print('You may want to consider a smaller step size.')
+			print('iteration number and lambda', i, Lambda)
 			sys.exit()
 			
 		#update lambda and the iteration 
 		i=i+1
 		Lambda+=d_lambda
-		#print 'lambda', Lambda	
+		#print('lambda', Lambda	)
 		
 		# update data for saving 
 		d_update=np.append(Lambda,P)
@@ -102,15 +102,15 @@ def RG_STS(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 
 		# set to True to check at each step 
 		if(False):
-		    ax=plt.subplot(111)
-		    ax.set_xscale('log')
-		    ax.set_yscale('log')
-		    ax.set_xlabel('k')
-		    
-		    ax.plot(k,P)
-		    ax.plot(k,P_0, color='red')
-		    plt.grid()
-		    plt.show()
+			ax=plt.subplot(111)
+			ax.set_xscale('log')
+			ax.set_yscale('log')
+			ax.set_xlabel('k')
+			
+			ax.plot(k,P)
+			ax.plot(k,P_0, color='red')
+			plt.grid()
+			plt.show()
 		
 	# save the data 
 	t2=time.time()
@@ -129,71 +129,71 @@ def RG_STS(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 	
 if __name__ == "__main__":
 
-    V=sys.version_info[0]
-    if (V < 3):
-        import ConfigParser as CP
-    if (V >=3 ):
-        import configparser as CP 
-        
-    parser = CP.SafeConfigParser()
-    
-    name='kmax10_example.ini'
-    
-    parser.read(name)
-    k_max=parser.getfloat('floats', 'k_max')
-    k_min=parser.getfloat('floats', 'k_min')
-    step=parser.getfloat('floats', 'step')
-    max=parser.getfloat('floats', 'max')
-    P_right=parser.getfloat('floats', 'P_w_right')
-    P_left=parser.getfloat('floats', 'P_w_left')
-    C_window=parser.getfloat('floats', 'C_window')
-    n_pad=parser.getint('integers', 'n_pad')
-    down_sample=parser.getint('integers', 'down_sample')
-    read_name=parser.get('files', 'in_file')
-    name=parser.get('files', 'out_file')
-	
-    d=np.loadtxt(read_name)	# load data
-    k=d[:,0]
-    P=d[:,1]
-
-    id=np.where( (k >= k_min) & (k <= k_max) )[0]
-    k=k[id]
-    P=P[id]
-	
-    k=k[::down_sample]
-    P=P[::down_sample]
-    # if your array is not even in size, FAST-PT will not work-
-    # trim if so. 
-    if (k.size % 2 != 0):
-        k=k[:-1]
-        P=P[:-1]
+	V=sys.version_info[0]
+	if (V < 3):
+		import ConfigParser as CP
+	if (V >=3 ):
+		import configparser as CP 
 		
-    print('Details of run.')
-    print('save name :', name)
-    print('k min and max:', k_min, k_max) 
-    print('grid size : ', k.size)
-    print('d log k: ', np.log(k[1])-np.log(k[0]) )
-    print('down sample factor:', down_sample)
+	parser = CP.SafeConfigParser()
+	
+	name='kmax10_example.ini'
+	
+	parser.read(name)
+	k_max=parser.getfloat('floats', 'k_max')
+	k_min=parser.getfloat('floats', 'k_min')
+	step=parser.getfloat('floats', 'step')
+	max=parser.getfloat('floats', 'max')
+	P_right=parser.getfloat('floats', 'P_w_right')
+	P_left=parser.getfloat('floats', 'P_w_left')
+	C_window=parser.getfloat('floats', 'C_window')
+	n_pad=parser.getint('integers', 'n_pad')
+	down_sample=parser.getint('integers', 'down_sample')
+	read_name=parser.get('files', 'in_file')
+	name=parser.get('files', 'out_file')
+	
+	d=np.loadtxt(read_name)	# load data
+	k=d[:,0]
+	P=d[:,1]
 
-    P_window=np.array([P_left,P_right])  
+	id=np.where( (k >= k_min) & (k <= k_max) )[0]
+	k=k[id]
+	P=P[id]
 	
-    P_rg=RG_STS(name,k,P,step,max,n_pad,P_window,C_window)	
-	
-    ax=plt.subplot(111)
-    ax.set_xscale('log')
-    ax.set_yscale('log')
-    ax.set_xlabel('k')
-	
-    ax.set_ylabel(r'$P(k)$', size=30)
-    ax.set_xlabel(r'$k$', size=30)
+	k=k[::down_sample]
+	P=P[::down_sample]
+	# if your array is not even in size, FAST-PT will not work-
+	# trim if so. 
+	if (k.size % 2 != 0):
+		k=k[:-1]
+		P=P[:-1]
+		
+	print('Details of run.')
+	print('save name :', name)
+	print('k min and max:', k_min, k_max) 
+	print('grid size : ', k.size)
+	print('d log k: ', np.log(k[1])-np.log(k[0]) )
+	print('down sample factor:', down_sample)
 
-    ax.plot(k,P, label='linear power') 
-    ax.plot(k,P_rg, label='RG' )
+	P_window=np.array([P_left,P_right])  
 	
-    plt.legend(loc=2) 
+	P_rg=RG_STS(name,k,P,step,max,n_pad,P_window,C_window)	
+	
+	ax=plt.subplot(111)
+	ax.set_xscale('log')
+	ax.set_yscale('log')
+	ax.set_xlabel('k')
+	
+	ax.set_ylabel(r'$P(k)$', size=30)
+	ax.set_xlabel(r'$k$', size=30)
+
+	ax.plot(k,P, label='linear power') 
+	ax.plot(k,P_rg, label='RG' )
+	
+	plt.legend(loc=2) 
 					
-    plt.grid()
-    plt.show()
+	plt.grid()
+	plt.show()
 	
 			
 	
