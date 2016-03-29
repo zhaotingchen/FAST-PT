@@ -84,7 +84,7 @@ def animate(i):
 	Lambda=d[i,0]
 	lambda_text.set_text(r'$\lambda$ = %2.4f' % Lambda)
 
- 	return line1,line2
+	return line1,line2
 	
 ani=animation.FuncAnimation(fig, animate, init_func=init, frames=N, interval=1, blit=False) 
 # save the animation as an mp4.  This requires ffmpeg or mencoder to be
@@ -94,6 +94,6 @@ ani=animation.FuncAnimation(fig, animate, init_func=init, frames=N, interval=1, 
 # http://matplotlib.sourceforge.net/api/animation_api.html
 ani.save(save_name, writer="ffmpeg")
  
- 	
+	
 			
 plt.show() 
