@@ -76,19 +76,19 @@ def RG_RK4(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 		
 		# check for failure. 
 		if (np.any(np.isnan(P))):
-			print 'RG flow has failed. It could be that you have not chosen a step size well.'
-			print 'You may want to consider a smaller step size.'
+			print('RG flow has failed. It could be that you have not chosen a step size well.')
+			print('You may want to consider a smaller step size.')
 			sys.exit()
 			
 		if (np.any(np.isinf(P))):
-			print 'RG flow has failed. It could be that you have not chosen a step size well.'
-			print 'You may want to consider a smaller step size.'
+			print('RG flow has failed. It could be that you have not chosen a step size well.')
+			print('You may want to consider a smaller step size.')
 			sys.exit()
 			
 		#update lambda and the iteration 
 		i=i+1
 		Lambda+=d_lambda
-		#print 'lambda', Lambda	
+		#print('lambda', Lambda	
 		
 		# update data for saving 
 		d_update=np.append(Lambda,P)
@@ -97,18 +97,18 @@ def RG_RK4(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 #		if (i % 20 ==0):
 # 			# I like to save at every 20th iteration. You
 # 			# could turn this off if you like
-# 			print 'this is the iteration', i
-# 			print 'this is Lambda', Lambda 
-# 			print 'this is d_lambda', d_lambda
-# 			print 'this is time since start', time.time()-t1
+# 			print('this is the iteration', i
+# 			print('this is Lambda', Lambda 
+# 			print('this is d_lambda', d_lambda
+# 			print('this is time since start', time.time()-t1
 # 			np.save(name,d_out)	
 # 		
 # 		# You could plot each step, or plot some downsample of steps here
 # 		# this is a good way to monitor instabilities 
- 		if (i % 100 == 0 ): 
+		if (i % 100 == 0 ): 
 			print('Lambda', Lambda) 
 # 		#if (i % 1 == 0 ): 
- 		if (False):	
+		if (False):	
 # 			
 			ax=plt.subplot(111)
 			ax.set_xscale('log')
@@ -132,11 +132,11 @@ def RG_RK4(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 if __name__ == "__main__":
 	
 	if sys.version_info.major==2:
-		from ConfigParser import SafeConfigParser
-	if sys.version_info.major==3:
+		from ConFigParser import SafeConfigParser
+	if sys.version_info.major>=3:
 		from configparser import SafeConfigParser
 	parser = SafeConfigParser()
- 		
+		
 	name='kmax1_example.ini'
 	
 	parser.read(name)

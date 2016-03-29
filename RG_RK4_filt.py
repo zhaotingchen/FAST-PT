@@ -115,21 +115,21 @@ def RG_RK4_filt(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 		
 		# check for failure. 
 		if (np.any(np.isnan(P))):
-			print 'RG flow has failed. It could be that you have not chosen a step size well.'
-			print 'You may want to consider a smaller step size.'
-			print 'Failure at lambda =', Lambda
+			print('RG flow has failed. It could be that you have not chosen a step size well.')
+			print('You may want to consider a smaller step size.')
+			print('Failure at lambda =', Lambda)
 			sys.exit()
 			
 		if (np.any(np.isinf(P))):
-			print 'RG flow has failed. It could be that you have not chosen a step size well.'
-			print 'You may want to consider a smaller step size.'
-			print 'Failure at lambda =', Lambda
+			print('RG flow has failed. It could be that you have not chosen a step size well.')
+			print('You may want to consider a smaller step size.')
+			print('Failure at lambda =', Lambda)
 			sys.exit()
 			
 		#update lambda and the iteration 
 		i=i+1
 		Lambda+=d_lambda
-		#print Lambda
+		#print(Lambda
 
 		# update data for saving 
 		d_update=np.append(Lambda,P)
@@ -138,17 +138,17 @@ def RG_RK4_filt(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 #		if (i % 20 ==0):
 # 			# I like to save at every 20th iteration. You
 # 			# could turn this off if you like
-# 			print 'this is the iteration', i
-# 			print 'this is Lambda', Lambda 
-# 			print 'this is d_lambda', d_lambda
-# 			print 'this is time since start', time.time()-t1
+# 			print('this is the iteration', i
+# 			print('this is Lambda', Lambda 
+# 			print('this is d_lambda', d_lambda
+# 			print('this is time since start', time.time()-t1
 # 			np.save(name,d_out)	
 # 		
 # 		# You could plot each step, or plot some downsample of steps here
 # 		# this is a good way to monitor instabilities 
 # 		#if (i % 100 == 0 ): 
 # 		#if (i % 1 == 0 ): 
- 		if (False):	
+		if (False):	
 # 			
 			ax=plt.subplot(111)
 			ax.set_xscale('log')
@@ -163,17 +163,20 @@ def RG_RK4_filt(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 		
 	# save the data 
 	t2=time.time()
-	print 'time to run seconds', t2-t1
-	print 'time to run minutes', (t2-t1)/60.
+	print('time to run seconds', t2-t1)
+	print('time to run minutes', (t2-t1)/60.)
 	np.save(name,d_out)	
 	return P 
 	
 if __name__ == "__main__":
 	
-	from ConfigParser import SafeConfigParser
+	if sys.version_info.major==2:
+		from ConFigParser import SafeConfigParser
+	if sys.version_info.major>=3:
+		from configparser import SafeConfigParser
 	parser = SafeConfigParser()
- 	
- 	
+	
+	
 	name='kmax10_example.ini'
 	
 	parser.read(name)
@@ -208,13 +211,13 @@ if __name__ == "__main__":
 		k=k[:-1]
 		P=P[:-1]
 		
-	print 'Details of run.'
-	print 'save name :', name
-	print 'k min and max:', k_min, k_max 
-	print 'step size : ', step
-	print 'grid size : ', k.size
-	print 'd log k: ', np.log(k[1])-np.log(k[0]) 
-	print 'down sample factor:', down_sample
+	print('Details of run.')
+	print('save name :', name)
+	print('k min and max:', k_min, k_max )
+	print('step size : ', step)
+	print('grid size : ', k.size)
+	print('d log k: ', np.log(k[1])-np.log(k[0]) )
+	print('down sample factor:', down_sample)
 
 	P_window=np.array([P_left,P_right])  
 	

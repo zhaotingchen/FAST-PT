@@ -32,7 +32,7 @@ def RG_STS(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 
 	#save name 
 	name='RG_STS_'+name
-	print 'save name=', name 
+	print('save name=', name )
 	N_steps=int(max/d_lambda)
 	# The spacing in log(k)
 	Delta=np.log(k[1])-np.log(k[0])
@@ -87,15 +87,15 @@ def RG_STS(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 		
 		# check for failure. 
 		if (np.any(np.isnan(P))):
-			print 'RG flow has failed. It could be that you have not chosen a step size well.'
-			print 'You may want to consider a smaller step size.'
-			print 'iteration number and lambda', i, Lambda
+			print('RG flow has failed. It could be that you have not chosen a step size well.')
+			print('You may want to consider a smaller step size.')
+			print('iteration number and lambda', i, Lambda)
 			sys.exit()
 			
 		if (np.any(np.isinf(P))):
-			print 'RG flow has failed. It could be that you have not chosen a step size well.'
-			print 'You may want to consider a smaller step size.'
-			print 'iteration number and lambda', i, Lambda
+			print('RG flow has failed. It could be that you have not chosen a step size well.')
+			print('You may want to consider a smaller step size.')
+			print('iteration number and lambda', i, Lambda)
 			sys.exit()
 			
 		#update lambda and the iteration 
@@ -120,7 +120,7 @@ def RG_STS(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 # 		# this is a good way to monitor instabilities 
 # 		#if (i % 100 == 0 ): 
 # 		#if (i % 1 == 0 ): 
- 		if (False):	
+		if (False):	
 # 			
 			ax=plt.subplot(121)
 			ax.set_xscale('log')
@@ -145,21 +145,22 @@ def RG_STS(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 		
 	# save the data 
 	t2=time.time()
-	print 'time to run seconds', t2-t1
-	print 'time to run minutes', (t2-t1)/60.
+	print('time to run seconds', t2-t1)
+	print('time to run minutes', (t2-t1)/60.)
 	np.save(name,d_out)	
 	# return last step 
 	return P 
 	
 if __name__ == "__main__":
 	
+
 	if sys.version_info.major==2:
-		from ConfigParser import SafeConfigParser
-	if sys.version_info.major==3:
+		from ConFigParser import SafeConfigParser
+	if sys.version_info.major>=3:
 		from configparser import SafeConfigParser
 	parser = SafeConfigParser()
- 	
- 	#print 'enter name of ini file, without the .ini part '
+	
+	#print 'enter name of ini file, without the .ini part '
 	#name=raw_input('file name? ')
 	#name=name+'.ini'
 	name='kmax10_example.ini'
