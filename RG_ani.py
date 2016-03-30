@@ -2,6 +2,8 @@
 	The code reads in data in the same format RG_<integration type>.py 
 	outputs. 
 	
+	You may get some warnings for taking log of zero and such. So, far these
+	have not ruined any of the output 
 	J. E. McEwen (c) 2016
 '''
 
@@ -15,17 +17,20 @@ import sys
 #name='data file to load'
 #save_name=' animation to save , must be a .mp4 extension'
 #title=r'what ever you like '
-name='RG_STS_001_kmax10_ds3.npy'
+name='RG_STS_001_kmax10_ds1.npy'
 save_name='test.mp4'
 title=r'RG test'
 d=np.load(name)
 
+
 k=d[0,:]
-P_0=d[1,:]
+P_0=d[2,:]
+
+
 # downsample if number of frames is large
 downsample=1
-d=d[3::downsample,:]
-N=d.shape[0]-1
+d=d[2::downsample,:]
+N=d.shape[0]
 
 # start program 
 #Lambda=0
@@ -92,6 +97,8 @@ ani=animation.FuncAnimation(fig, animate, init_func=init, frames=N, interval=1, 
 # the video can be embedded in html5.  You may need to adjust this for
 # your system: for more information, see
 # http://matplotlib.sourceforge.net/api/animation_api.html
+
+# comment this out if you don't have ffmpeg 
 ani.save(save_name, writer="ffmpeg")
  
 	
