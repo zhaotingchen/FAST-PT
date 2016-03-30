@@ -21,6 +21,7 @@ import time, sys
 
 # set the STS parameters here 
 # this combo seems to work well for k_max=10, 2000 grid points 
+# if you encounter instabilities you may want to fiddle with these values. 
 stage=10
 mu=.1
 # this is \Delta \lambda_{CFL}
@@ -49,14 +50,14 @@ def RG_STS(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 	nu=-2
 	fastpt=FASTPT.FASTPT(k,nu,n_pad=n_pad) 	
 	P_spt=fastpt.one_loop(P_0,C_window=C_window) 
-	
+	P_spt=P_0+P_spt
 	# initial lambda 
 	Lambda=0
 
 	d_out=np.zeros((3,k.size+1))
 	d_out[0,:]=np.append(Lambda,k)
-	d_out[1,:]=np.append(Lambda,P_0)
-	d_out[2,:]=np.append(Lambda,P_spt) 
+	d_out[2,:]=np.append(Lambda,P_0)
+	d_out[1,:]=np.append(Lambda,P_spt) 
 	dt_j=np.zeros(stage)
 	
 	for j in range(stage):
@@ -92,6 +93,9 @@ def RG_STS(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 		#update lambda and the iteration 
 		i=i+1
 		Lambda+=d_lambda
+		# break if the next step is already passed lambda max 
+		if (Lambda >=max):
+		    break
 		#print('lambda', Lambda	)
 		
 		# update data for saving 
@@ -109,7 +113,34 @@ def RG_STS(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 			ax.plot(k,P_0, color='red')
 			plt.grid()
 			plt.show()
-		
+	
+	''' Since STS method computes its own Delta Lambda.
+	    So,this routine will not end exaclty at max. 
+	    Therefore, take Euler steps to reach the end
+	'''
+	last_step=np.absolute(Lambda-d_lambda-max)
+	#print('Lambda', Lambda-d_lambda) 
+	#print('last step', last_step)
+	
+	k1=fastpt.one_loop(P,C_window=C_window) 
+	k1=k1*W 
+					
+	k2=fastpt.one_loop(k1*last_step/2.+ P,C_window=C_window) 
+	k2=k2*W 
+				
+	k3=fastpt.one_loop(k2*last_step/2. +P,C_window=C_window) 
+	k3=k3*W 
+				
+	k4=fastpt.one_loop(k3*last_step +P,C_window=C_window)
+	k4=k4*W
+			
+	# full step 
+	P=P+1/6.*(k1+2*k2+2*k3+k4)*last_step
+	Lambda=Lambda-d_lambda+last_step
+	# update data for saving 
+	d_update=np.append(Lambda,P)
+	d_out=np.row_stack((d_out,d_update))
+	
 	# save the data 
 	t2=time.time()
 	print('time to run seconds', t2-t1)
