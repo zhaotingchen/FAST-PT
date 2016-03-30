@@ -155,14 +155,11 @@ def RG_RK4_filt(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 if __name__ == "__main__":
 	
 	V=sys.version_info[0]
-	
 	if (V < 3):
-		import ConfigParser as CP
-		
+		from ConfigParser import SafeConfigParser
 	if (V >=3 ):
-		import configparser as CP
-
-	parser = CP.SafeConfigParser()
+		from configparser import SafeConfigParser
+	parser = SafeConfigParser()
 	
 	name='kmax10_example.ini'
 	
@@ -221,7 +218,7 @@ if __name__ == "__main__":
 	ax.plot(k,P, label='linear power') 
 	ax.plot(k,P_rg, label='RG' )
 	
-	plt.legend(loc=2) 
+	plt.legend(loc=3) 
 					
 	plt.grid()
 	plt.show()

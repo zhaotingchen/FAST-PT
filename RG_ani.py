@@ -17,7 +17,7 @@ import sys
 #title=r'what ever you like '
 name='RG_STS_001_kmax10_ds3.npy'
 save_name='test.mp4'
-title=r'test'
+title=r'RG test'
 d=np.load(name)
 
 k=d[0,:]

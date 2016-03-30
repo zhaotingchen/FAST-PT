@@ -114,9 +114,6 @@ def RG_STS(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 	t2=time.time()
 	print('time to run seconds', t2-t1)
 	print('time to run minutes', (t2-t1)/60.)
-	print(d_out[25,:])
-	print(d_out[-1,:])
-	print(d_out[-2,:])
 	print('iteration', i )
 	print('save name', name)
 	print('shape', d_out.shape)
@@ -129,11 +126,10 @@ if __name__ == "__main__":
 
 	V=sys.version_info[0]
 	if (V < 3):
-		import ConfigParser as CP
+		from ConfigParser import SafeConfigParser
 	if (V >=3 ):
-		import configparser as CP 
-		
-	parser = CP.SafeConfigParser()
+		from configparser import SafeConfigParser
+	parser = SafeConfigParser()
 	
 	name='kmax10_example.ini'
 	
