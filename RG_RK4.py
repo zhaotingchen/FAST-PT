@@ -39,14 +39,14 @@ def RG_RK4(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 	nu=-2
 	fastpt=FASTPT.FASTPT(k,nu,n_pad=n_pad) 	
 	P_spt=fastpt.one_loop(P_0,C_window=C_window) 
-	
+	P_spt=P_0+P_spt
 	# initial lambda 
 	Lambda=0
 
 	d_out=np.zeros((3,k.size+1))
 	d_out[0,:]=np.append(Lambda,k)
-	d_out[1,:]=np.append(Lambda,P_0)
-	d_out[2,:]=np.append(Lambda,P_spt) 
+	d_out[2,:]=np.append(Lambda,P_0)
+	d_out[1,:]=np.append(Lambda,P_spt) 
 	
 	
 	i=0
@@ -55,21 +55,16 @@ def RG_RK4(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 	
 		k1=fastpt.one_loop(P,C_window=C_window) 
 		k1=k1*W 
-		
-				
+					
 		k2=fastpt.one_loop(k1*d_lambda/2.+ P,C_window=C_window) 
 		k2=k2*W 
-		
-			
+				
 		k3=fastpt.one_loop(k2*d_lambda/2. +P,C_window=C_window) 
 		k3=k3*W 
-		
-			
+				
 		k4=fastpt.one_loop(k3*d_lambda +P,C_window=C_window)
 		k4=k4*W
-		
-		
-	
+			
 		# full step 
 		P=P+1/6.*(k1+2*k2+2*k3+k4)*d_lambda
 		
