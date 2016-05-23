@@ -156,9 +156,11 @@ if __name__ == "__main__":
 	print('Details of run.')
 	print('save name :', name)
 	print('k min and max:', k_min, k_max)
+	print('d log k', np.log(k[1])-np.log(k[0]) )
 	print('step size : ', step)
 	print('grid size : ', k.size)
 	print('down sample factor:', down_sample)
+	print(' d lambda', step)
 
 	P_window=np.array([P_left,P_right])  
 	

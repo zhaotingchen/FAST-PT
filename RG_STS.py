@@ -19,17 +19,11 @@ from fastpt_extr import p_window
 import FASTPT
 import time, sys
 
-# set the STS parameters here 
-# this combo seems to work well for k_max=10, 2000 grid points 
-# if you encounter instabilities you may want to fiddle with these values. 
-stage=10
-mu=.1
-# this is \Delta \lambda_{CFL}
-dlambda_CFL=1e-3
 
+def RG_STS(STS_params,name,k,P,d_lambda,max,n_pad,P_window,C_window):
 
-def RG_STS(name,k,P,d_lambda,max,n_pad,P_window,C_window):
-	  
+	stage, mu, dlambda_CFL=STS_params
+	
 	#save name 
 	name='RG_STS_'+name
 	print('save name=', name)
@@ -95,7 +89,7 @@ def RG_STS(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 		Lambda+=d_lambda
 		# break if the next step is already passed lambda max 
 		if (Lambda >=max):
-		    break
+			break
 		#print('lambda', Lambda	)
 		
 		# update data for saving 
@@ -115,8 +109,8 @@ def RG_STS(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 			plt.show()
 	
 	''' Since STS method computes its own Delta Lambda.
-	    So,this routine will not end exaclty at max. 
-	    Therefore, take Euler steps to reach the end
+		So,this routine will not end exaclty at max. 
+		Therefore, take Euler steps to reach the end
 	'''
 	last_step=np.absolute(Lambda-d_lambda-max)
 	#print('Lambda', Lambda-d_lambda) 
@@ -154,6 +148,16 @@ def RG_STS(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 	return P 
 	
 if __name__ == "__main__":
+
+	# set the STS parameters here 
+	# this combo seems to work well for k_max=10, 2000 grid points 
+	# if you encounter instabilities you may want to fiddle with these values. 
+	stage=10
+	mu=.1
+	# this is \Delta \lambda_{CFL}
+	dlambda_CFL=1e-3
+
+	STS_params=[stage, mu, dlambda_CFL] 
 
 	V=sys.version_info[0]
 	if (V < 3):
@@ -202,7 +206,7 @@ if __name__ == "__main__":
 
 	P_window=np.array([P_left,P_right])  
 	
-	P_rg=RG_STS(name,k,P,step,max,n_pad,P_window,C_window)	
+	P_rg=RG_STS(STS_params,name,k,P,step,max,n_pad,P_window,C_window)	
 	
 	ax=plt.subplot(111)
 	ax.set_xscale('log')
