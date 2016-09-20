@@ -36,11 +36,12 @@ k=d[:,0]; P_lin=d[:,1]
 import FASTPT
 from time import time 
 C_window=.65	
-n_pad=len(k)
+n_pad=1000
 		
 t1=time()	
 # initialize the FASTPT class
-fastpt=FASTPT.FASTPT(k,nu=-2,low_extrap=-8,high_extrap=5,n_pad=n_pad) 
+nu=-2
+fastpt=FASTPT.FASTPT(k,-2,n_pad=n_pad) 
 
 P_1loop=fastpt.one_loop(P_lin,C_window=C_window) 
 _,Pd1d2, Pd2d2, Pd1s2, Pd2s2, Ps2s2, sig4 =fastpt.P_bias(P_lin,C_window=C_window) 
@@ -72,7 +73,7 @@ ax1.set_ylabel(r'$P(k)$ [Mpc/$h$]$^3$', size=20)
 ax1.tick_params(axis='both', which='major', labelsize=20)
 ax1.tick_params(axis='both', width=2, length=10)
 ax1.tick_params(axis='both', which='minor', width=1, length=5)
-ax1.xaxis.set_major_formatter(FormatStrFormatter('%2.2f'))
+#ax1.xaxis.set_major_formatter(FormatStrFormatter('%2.2f'))
 ax1.xaxis.labelpad = 20
 ax1.set_xticklabels([])
 
@@ -90,7 +91,7 @@ ax2.set_xlim(x1,x2)
 ax2.tick_params(axis='both', which='major', labelsize=20)
 ax2.tick_params(axis='both', width=2, length=10)
 ax2.tick_params(axis='both', which='minor', width=1, length=5)
-ax2.xaxis.set_major_formatter(FormatStrFormatter('%2.2f'))
+#ax2.xaxis.set_major_formatter(FormatStrFormatter('%2.2f'))
 ax2.xaxis.labelpad = 20
  
  
@@ -107,7 +108,7 @@ ax1.set_ylabel(r'$P(k)$ [Mpc/$h$]$^3$', size=20)
 ax1.tick_params(axis='both', which='major', labelsize=20)
 ax1.tick_params(axis='both', width=2, length=10)
 ax1.tick_params(axis='both', which='minor', width=1, length=5)
-ax1.xaxis.set_major_formatter(FormatStrFormatter('%2.4f'))
+#ax1.xaxis.set_major_formatter(FormatStrFormatter('%2.4f'))
 ax1.xaxis.labelpad = 20
 ax1.set_xticklabels([])
 
@@ -126,7 +127,7 @@ ax2.set_xlim(x1,x2)
 ax2.tick_params(axis='both', which='major', labelsize=20)
 ax2.tick_params(axis='both', width=2, length=10)
 ax2.tick_params(axis='both', which='minor', width=1, length=5)
-ax2.xaxis.set_major_formatter(FormatStrFormatter('%2.4f'))
+#ax2.xaxis.set_major_formatter(FormatStrFormatter('%2.4f'))
 ax2.xaxis.labelpad = 20
  
  
@@ -144,7 +145,7 @@ ax1.set_ylabel(r'$P(k)$ [Mpc/$h$]$^3$', size=20)
 ax1.tick_params(axis='both', which='major', labelsize=20)
 ax1.tick_params(axis='both', width=2, length=10)
 ax1.tick_params(axis='both', which='minor', width=1, length=5)
-ax1.xaxis.set_major_formatter(FormatStrFormatter('%2.4f'))
+#ax1.xaxis.set_major_formatter(FormatStrFormatter('%2.4f'))
 ax1.xaxis.labelpad = 20
 ax1.set_xticklabels([])
 
@@ -164,7 +165,7 @@ ax2.set_xlim(x1,x2)
 ax2.tick_params(axis='both', which='major', labelsize=20)
 ax2.tick_params(axis='both', width=2, length=10)
 ax2.tick_params(axis='both', which='minor', width=1, length=5)
-ax2.xaxis.set_major_formatter(FormatStrFormatter('%2.2f'))
+#ax2.xaxis.set_major_formatter(FormatStrFormatter('%2.2f'))
 ax2.xaxis.labelpad = 20
  
 ax2.plot(k,Pd1s2/d[:,12], lw=2, color='black', alpha=.5, label=r'$-b_1 b_s$, FAST-PT ' )

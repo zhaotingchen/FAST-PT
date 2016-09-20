@@ -42,7 +42,7 @@ def RG_STS(STS_params,name,k,P,d_lambda,max,n_pad,P_window,C_window):
 	
 	# standard 1-loop parameters 
 	nu=-2
-	fastpt=FASTPT.FASTPT(k,nu,n_pad=n_pad) 	
+	fastpt=FASTPT.FASTPT(k,nu=nu,n_pad=n_pad) 	
 	P_spt=fastpt.one_loop(P_0,C_window=C_window) 
 	P_spt=P_0+P_spt
 	# initial lambda 

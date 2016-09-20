@@ -13,6 +13,7 @@ email : jmcewen314@gmail.com
 import numpy as np
 from numpy import log, sqrt, exp, pi
 from scipy.integrate import trapz
+from scipy.signal import fftconvolve 
 from J_k import J_k 
 import sys
 
@@ -69,7 +70,7 @@ def P_13_reg(k,P):
 	
 	f=np.hstack((f_low,f_mid_low,80,f_mid_high,f_high))
 	
-	g= np.convolve(P, f) * dL
+	g= fftconvolve(P, f) * dL
 	g_k=g[N-1:2*N-1]
 	P_bar= 1./252.* k**3/(2*pi)**2*P*g_k 
 

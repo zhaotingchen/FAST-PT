@@ -40,7 +40,7 @@ def RG_RK4_filt(name,k,P,d_lambda,max,n_pad,P_window,C_window):
 	P_0=P*W
 	
 	nu=-2
-	fastpt=FASTPT.FASTPT(k,nu,n_pad=n_pad) 	
+	fastpt=FASTPT.FASTPT(k,nu=nu,n_pad=n_pad) 	
 	P_spt=fastpt.one_loop(P_0,C_window=C_window) 
 	P_spt=P_0+P_spt
 	

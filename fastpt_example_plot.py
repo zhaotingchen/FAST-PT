@@ -7,7 +7,7 @@
 '''
 
 import numpy as np 
-from matter_power_spt import one_loop
+#from matter_power_spt import one_loop
 import FASTPT 
 from time import time 
 
@@ -26,15 +26,14 @@ P=d[:,1]
 
 P_window=np.array([.2,.2])  
 C_window=.65	
-nu=-2; n_pad=500
-# initialize the FASTPT class		
-fastpt=FASTPT.FASTPT(k,nu=-2,n_pad=n_pad) 
-# if you want to use the high and low extrapolation uncomment below, comment above 
-#fastpt=FASTPT.FASTPT(k,nu,low_extrap=-5,high_extrap=5,n_pad=n_pad) 
-	
-	
+nu=-2; n_pad=1000
+# initialize the FASTPT class	
+
+fastpt=FASTPT.FASTPT(k,nu,low_extrap=-5,high_extrap=5,n_pad=n_pad) 
+		
 t1=time()	
 P_spt=fastpt.one_loop(P,C_window=C_window) 
+
 t2=time()
 print('time'), t2-t1 
 
@@ -47,7 +46,7 @@ from matplotlib.ticker import ScalarFormatter, FormatStrFormatter
 fig=plt.figure(figsize=(16,10))
 
 x1=10**(-2.5)
-x2=50
+x2=10
 ax1=fig.add_subplot(211)
 ax1.set_ylim(1e-2,1e3)
 ax1.set_xlim(x1,x2)
