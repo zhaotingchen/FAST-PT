@@ -14,5 +14,5 @@ FAST-PT way to get started:
 
 See the user_manual.pdf for more details. 
 
-Our paper (arXiv:1603.04826 ) describes the FAST-PT algorithm and implementation. This paper should be cited when using FAST-PT in your research.
+Our papers (arXiv:1603.04826 and arXiv:1609.05978) describe the FAST-PT algorithm and implementation. Please cite these papers when using FAST-PT in your research.
 
