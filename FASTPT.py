@@ -61,8 +61,8 @@ class FASTPT:
 	def __init__(self,k,nu=None,to_do=None,param_mat=None,low_extrap=None,high_extrap=None,n_pad=None,verbose=False):
 
 		''' inputs:
-				* k gird
-				* the to_do list, like one_loop density density , bias terms, ..
+				* k grid
+				* the to_do list: e.g. one_loop density density , bias terms, ...
 				* low_extrap is the call to extrapolate the power spectrum to lower k-values,
 					this helps with edge effects
 				* n_pad is the number of zeros to add to both ends of the array. This helps with 
@@ -75,7 +75,7 @@ class FASTPT:
 			# set the to_do list to nothing    
 			# raise an error is nu=None
 			if (nu is None):
-				raise ValueError('nu is set to None, you need to specify a numerical value')
+				raise ValueError('nu is set to None, you need to specify a numerical value for FASTPT_simple.')
 					  
 			to_do=[]
 			if (verbose):
@@ -247,6 +247,7 @@ class FASTPT:
 			# Returns relevant correlations (including contraction factors),
 			# but WITHOUT bias values and other pre-factors.
 			# Uses standard "full initialization" of J terms
+			sig4=np.trapz(self.k_old**2*Ps**2,x=self.k_old)/(2.*pi**2)
 			Pd1d2=2.*(17./21*mat[0,:]+mat[4,:]+4./21*mat[1,:])
 			Pd2d2=2.*(mat[0,:])
 			Pd1s2=2.*(8./315*mat[0,:]+4./15*mat[4,:]+254./441*mat[1,:]+2./5*mat[5,:]+16./245*mat[2,:])
@@ -254,18 +255,19 @@ class FASTPT:
 			Ps2s2=2.*(4./45*mat[0,:]+8./63*mat[1,:]+8./35*mat[2,:])
 			P_1loop=P22+P13
 			if (self.extrap):
-				_,P_1loop=self.EK.PK_original(P_1loop)
+				_, Ps=self.EK.PK_original(Ps)
+				_, P_1loop=self.EK.PK_original(P_1loop)
 				_, Pd1d2=self.EK.PK_original(Pd1d2)
 				_, Pd2d2=self.EK.PK_original(Pd2d2)
 				_, Pd1s2=self.EK.PK_original(Pd1s2)
 				_, Pd2s2=self.EK.PK_original(Pd2s2)
 				_, Ps2s2=self.EK.PK_original(Ps2s2)
 			
-			return P_1loop, Pd1d2, Pd2d2, Pd1s2, Pd2s2, Ps2s2 
+			return P_1loop, Pd1d2, Pd2d2, Pd1s2, Pd2s2, Ps2s2, sig4, Ps
 		
 		if (self.extrap):
-			_,P=self.EK.PK_original(P22+P13)
-			return P
+			_,P_1loop=self.EK.PK_original(P22+P13)
+			return P_1loop
 		return P22 + P13
 
 	
@@ -515,8 +517,8 @@ class FASTPT:
 		
 
 if __name__ == "__main__":
-	# An example script to run FASTPT and get the plot for
-	# P_22 + P_13 
+	# An example script to run FASTPT for (P_22 + P_13) and IA.
+	# Makes a plot for P_22 + P_13.
 	
 	# load the data file 
 	
@@ -531,7 +533,7 @@ if __name__ == "__main__":
 	
 	# padding length 
 	n_pad=1000
-	to_do=['one_loop_dd']
+	to_do=['one_loop_dd','IA']
 	
 	from time import time
 		
@@ -539,14 +541,17 @@ if __name__ == "__main__":
 	# including extrapolation to higher and lower k  
 	fastpt=FASTPT(k,to_do=to_do,low_extrap=-5,high_extrap=3,n_pad=n_pad) 
 	
-	t1=time()   
-	
-	P_spt=fastpt.one_loop_dd(P,C_window=C_window) 
+	t1=time()
+	# calculate 1loop SPT (and time the operation)
+	P_spt=fastpt.one_loop_dd(P,C_window=C_window)
 		
 	t2=time()
-	print('time'), t2-t1 
+	print('time'), t2-t1
+
+	#calculate tidal torque EE and BB P(k)
+	P_IA=fastpt.IA(P,C_window=C_window)
 		
-	# make a plot 
+	# make a plot of 1loop SPT results
 	import matplotlib.pyplot as plt
 	
 	ax=plt.subplot(111)
