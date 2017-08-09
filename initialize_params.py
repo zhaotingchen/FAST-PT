@@ -49,7 +49,7 @@ def g_m_vals(mu,q):
 	
 def gamsn(z):
 	z=np.asarray(z, dtype=complex)
-	result=sqrt(pi) /2. * 2**z *g_m_vals(0.5, z-0.5)
+	result=sqrt(pi) /2. * 2.**z *g_m_vals(0.5, z-0.5)
 	return result
 
 def scalar_stuff(p_mat,nu,N,m,eta_m,l, tau_l):
@@ -91,7 +91,7 @@ def scalar_stuff(p_mat,nu,N,m,eta_m,l, tau_l):
 				g_n[i,:]=gamsn(Q_n)
 				
 				#two_part_m=2**Q_m
-				g_m[i,:]=g_m[i,:]*2**Q_m
+				g_m[i,:]=g_m[i,:]*2.**Q_m
 				
 				# prefactor
 				pf[i]=(-1)**l_Bessel[i]/pi**3*np.sqrt(pi/2.)
@@ -100,7 +100,7 @@ def scalar_stuff(p_mat,nu,N,m,eta_m,l, tau_l):
 			else:
 				g_n[i,:]=g_m_vals(sigma,Q_n)
 				# pre factor 
-				pf[i]=(-1)**l_Bessel[i]/pi**2*2**(2+2*nu+alpha[i]+beta[i])
+				pf[i]=(-1)**l_Bessel[i]/pi**2*2.**(2+2*nu+alpha[i]+beta[i])
 				two_part_l[i,:]=exp(1j*tau_l*log2)
 				
 			# calculate h_l

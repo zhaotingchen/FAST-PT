@@ -81,15 +81,15 @@ ax2.set_xlabel(r'$k$ [$h$/Mpc]', size=25)
 ax2.set_ylim(-3e-5,3e-5)
 ax2.set_xlim(x1,x2)
 
-labels = [item.get_text() for item in ax2.get_yticklabels()]
-labels[1] = r'$-3\times 10^{-5}$'
-labels[2] = r'$-2\times 10^{-5}$'
-labels[3] = r'$-1\times 10^{-5}$'
-labels[4] = '0'
-labels[5] = r'$1\times 10^{-5}$'
-labels[6] = r'$2\times 10^{-5}$'
-labels[7] = r'$3\times 10^{-5}$'
-ax2.set_yticklabels(labels)
+# labels = [item.get_text() for item in ax2.get_yticklabels()]
+# labels[1] = r'$-3\times 10^{-5}$'
+# labels[2] = r'$-2\times 10^{-5}$'
+# labels[3] = r'$-1\times 10^{-5}$'
+# labels[4] = '0'
+# labels[5] = r'$1\times 10^{-5}$'
+# labels[6] = r'$2\times 10^{-5}$'
+# labels[7] = r'$3\times 10^{-5}$'
+# ax2.set_yticklabels(labels)
 
 ax2.tick_params(axis='both', which='major', labelsize=25)
 ax2.tick_params(axis='both', width=2, length=10)
