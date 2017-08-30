@@ -25,7 +25,7 @@ l_mat_B= np.array([[0,0,0,0,0,-41./405],\
 		[0,0,2,0,2,-20./27],\
 		[0,0,2,2,2,-16./27],\
 		[0,0,1,1,3,2./5]],dtype=float)
-def IA():
+def IA_tt():
 	tableE=np.zeros(10,dtype=float)
 	for i in range(l_mat_E.shape[0]):
 		xE=J_table(l_mat_E[i])

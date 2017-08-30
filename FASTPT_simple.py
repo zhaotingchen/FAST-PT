@@ -13,6 +13,7 @@
 	\int \frac{d^3q}{(2 \pi)^3} K(q,k-q) P(q) P(|k-q|) 
 '''
 from __future__ import division 
+from __future__ import print_function
 
 
 import numpy as np
@@ -39,7 +40,7 @@ class FASTPT:
 		dk=np.diff(np.log(k))
 		dk_test=np.ones_like(dk)*dk[0]
 		
-		log_sample_test='ERROR! FASTPT will not work if your k vector is not sampled evenly in log space! You could use the included interpolation routine if you like.'
+		log_sample_test='ERROR! FASTPT will not work if your k vector is not sampled evenly in log space!'
 		
 		np.testing.assert_array_almost_equal(dk, dk_test, decimal=4, err_msg=log_sample_test, verbose=False)
 		
@@ -59,7 +60,7 @@ class FASTPT:
 		
 		self.k_old=k
 		
-		delta_L=(log(np.max(k))-log(np.min(k)))/(k.size-1)   # need to put in a check to make sure that it is log sampled
+		delta_L=(log(np.max(k))-log(np.min(k)))/(k.size-1)
 		
 		if(n_pad !=None):
 			self.id_pad=np.arange(k.size)+n_pad
@@ -74,7 +75,6 @@ class FASTPT:
 			
 			# check to make sure that the n padding sufficient to keep the 
 			# FASTPT k_min less than 1/2 of the input k_min (added a plus 1 to be safe)
-			# actually we really need to change how the padding works, some of it is redundant. 
 			n_pad_check=int(np.log(2)/delta_L) +1
 			if (n_pad < n_pad_check): 
 				print('Warning, you should consider increasing your zero padding to at least ', n_pad_check, ' .')
@@ -183,8 +183,8 @@ class FASTPT:
 		
 		if P_window is not None:
 		# window the input power spectrum, so that at high and low k
-		# the signal smoothly tappers to zero. This make the input
-		# more "like" a periodic signal 
+		# the signal smoothly tapers to zero. This make the input
+		# more like a periodic signal 
 			
 			if (self.verbose):
 				print('windowing biased power spectrum')
@@ -322,12 +322,12 @@ if __name__ == "__main__":
 	
 	
 	t1=time()   
-	# with out P_windowing (better if you are using zero padding) 
+	# without P_windowing (better if you are using zero padding) 
 	P_spt=fastpt.one_loop(P,C_window=C_window) 
 	#Ps,_,_,_,_,_,_=fastpt.P_bias(P,C_window=C_window) 
 	
 	t2=time()
-	print('time'), t2-t1 
+	print('time', "%10.3f" %(t2-t1),'s')
 	
 	
 	# make a plot 

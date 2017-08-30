@@ -29,7 +29,7 @@ C_window=.65
 nu=-2; n_pad=1000
 # initialize the FASTPT class	
 
-fastpt=FASTPT.FASTPT(k,nu,low_extrap=-5,high_extrap=5,n_pad=n_pad) 
+fastpt=FASTPT.FASTPT(k,nu,low_extrap=-5,high_extrap=5,n_pad=n_pad,verbose=True) 
 		
 t1=time()	
 P_spt=fastpt.one_loop(P,C_window=C_window) 

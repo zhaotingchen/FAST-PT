@@ -31,7 +31,7 @@ fastpt=FASTPT.FASTPT(k,to_do=['IA'],low_extrap=-6,high_extrap=4,n_pad=n_pad)
 	
 	
 t1=time()	
-IA_E, IA_B=fastpt.IA(P,C_window=C_window) 
+IA_E, IA_B=fastpt.IA_tt(P,C_window=C_window) 
 t2=time()
 # print('execution time to make IA data'), t2-t1 
 
@@ -43,9 +43,9 @@ from matplotlib.ticker import ScalarFormatter, FormatStrFormatter
 #mpl.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib import rc
-
 rc('font',**{'family':'serif','serif':['Times','Palatino']})
-rc('text', usetex=True)
+# rc('text', usetex=True)
+
 
 IA_E=IA_E[98:599]
 IA_B=IA_B[98:599]
@@ -56,7 +56,7 @@ fig=plt.figure(figsize=(16,10))
 x1=10**(-2.5)
 x2=10
 ax1=fig.add_subplot(211)
-ax1.set_ylim(5e-2,2e2)
+ax1.set_ylim(8e-2,4e2)
 ax1.set_xlim(x1,x2)
 ax1.set_xscale('log')
 ax1.set_yscale('log')
@@ -100,8 +100,8 @@ ax2.xaxis.set_major_formatter(FormatStrFormatter('%2.2f'))
 ax2.xaxis.labelpad = 20
 
 
-ax2.plot(k,IA_E/(d[:,2]/2.)-1,lw=2, color='black')
-ax2.plot(k,IA_B/(d[:,4]/2.)-1,'--',lw=2, color='black')
+ax2.plot(k,IA_E/(d[:,2])-1,lw=2, color='black')
+ax2.plot(k,IA_B/(d[:,4])-1,'--',lw=2, color='black')
 ax2.text(0.02, 0.07, 'fractional difference',transform=ax2.transAxes,verticalalignment='bottom', horizontalalignment='left', fontsize=25, bbox=dict(facecolor='white',edgecolor='black', pad=8.0))
 
 # plt.legend(loc=3,fontsize=30)

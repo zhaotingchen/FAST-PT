@@ -1,9 +1,9 @@
 ''' 
 	FASTPT is a numerical algorithm to calculate 
-	1-loop contributions to the matter power spectrum or other 
-	similar type integrals. 
+	1-loop contributions to the matter power spectrum 
+	and other integrals of a similar type. 
 	The method is presented in papers arXiv:1603.04826 and arXiv:1609.05978
-	Please cite these papers if you are using FASTPT
+	Please cite these papers if you are using FASTPT in your research.
 		
 	Joseph E. McEwen (c) 2016 
 	mcewen.24@osu.edu 
@@ -12,7 +12,7 @@
 	fang.307@osu.edu 
 
 	Jonathan A. Blazek 
-	blazek.35@osu.edu 
+	blazek@berkeley.edu 
 
 
 	FFFFFFFF    A           SSSSSSSSS   TTTTTTTTTTTTTT             PPPPPPPPP    TTTTTTTTTTTT
@@ -24,8 +24,8 @@
 	FF    AA         AA    SSSSSSSSS          TT                   PP                TT
 	
 	
-	The FASTPT class is the workhose of the FASTPT algorithm. 
-	This class calculates integrals of the form 
+	The FASTPT class is the workhorse of the FASTPT algorithm. 
+	This class calculates integrals of the form:
 	
 	\int \frac{d^3q}{(2 \pi)^3} K(q,k-q) P(q) P(|k-q|)
 	
@@ -33,27 +33,27 @@
 	
 '''
 from __future__ import division 
+from __future__ import print_function
 
+from info import __version__
 
 import numpy as np
 from numpy.fft import fft, ifft , rfft, irfft , fftfreq
 from numpy import exp, log, log10, cos, sin, pi, cosh, sinh , sqrt
-from scipy.special import gamma 
-import sys
-from time import time 
+from scipy.special import gamma
+from scipy.signal import fftconvolve
 from fastpt_extr import p_window, c_window, pad_left, pad_right
-from matter_power_spt import P_13_reg 
-from scipy.signal import fftconvolve 
+from matter_power_spt import P_13_reg
 from initialize_params import scalar_stuff, tensor_stuff
-from IA import IA 
-from OV import OV 
+from IA_tt import IA_tt
+from IA_ABD import IA_A, IA_DEE, IA_DBB, P_IA_B
+from IA_ta import IA_deltaE1, P_IA_deltaE2, IA_0E0E, IA_0B0B
+from OV import OV
 from kPol import kPol
-from RSD import RSDA, RSDB 
-import RSD_ItypeII 
+from RSD import RSDA, RSDB
+import RSD_ItypeII
 from P_extend import k_extend
-import FASTPT_simple as fastpt_simple 
-
-
+import FASTPT_simple as fastpt_simple
 
 log2=log(2.)
 class FASTPT:
@@ -70,26 +70,25 @@ class FASTPT:
 				* verbose is to turn on verbose settings. 
 		'''
 		
-		# if no to_do list is given, default to SPT case
-		if (to_do is None):
-			# set the to_do list to nothing    
-			# raise an error is nu=None
-			if (nu is None):
-				raise ValueError('nu is set to None, you need to specify a numerical value for FASTPT_simple.')
-					  
-			to_do=[]
+		# if no to_do list is given, default to fastpt_simple SPT case
+		if (to_do is None): 
 			if (verbose):
-			    print('Note: You are using an earlier call structure for FASTPT. Your code will still run correctly, calling FASTPT_simple. See user manual.')
-			
+				print('Note: You are using an earlier call structure for FASTPT. Your code will still run correctly, calling FASTPT_simple. See user manual.')
+			if (nu is None):# give a warning if nu=None that a default value is being used.
+				print('WARNING: No value for nu is given. FASTPT_simple is being called with a default of nu=-2')
+				nu=-2 #this is the default value for P22+P13 and bias calculation
 			self.pt_simple=fastpt_simple.FASTPT(k,nu,param_mat=param_mat,low_extrap=low_extrap,high_extrap=high_extrap,n_pad=n_pad,verbose=verbose)
-		   
+			return None
+			# Exit initialization here, since fastpt_simple performs the various checks on the k grid and does extrapolation.
 		
 		# check for log spacing
+		print('Initializing k-grid quantities...')
 		dk=np.diff(np.log(k))
-		dk_test=np.ones_like(dk)*dk[0]
-
-		log_sample_test='ERROR! FASTPT will not work if your k vector is not sampled evenly in log space! \
-		You could use the included interpolation routine if you like.'
+		#dk_test=np.ones_like(dk)*dk[0]
+		delta_L=(log(k[-1])-log(k[0]))/(k.size-1)
+		dk_test=np.ones_like(dk)*delta_L
+		
+		log_sample_test='ERROR! FASTPT will not work if your in put (k,Pk) values are not sampled evenly in log space!'
 		np.testing.assert_array_almost_equal(dk, dk_test, decimal=4, err_msg=log_sample_test, verbose=False)
 
 		if (verbose):
@@ -117,13 +116,7 @@ class FASTPT:
 		#print(self.k_old.size, 'k size')
 		# size of input array must be an even number 
 		if (k.size % 2 != 0):
-			raise ValueError('Input array must contain an even number of elements.')
-			
-			
-			
-			
-		
-		delta_L=(log(np.max(k))-log(np.min(k)))/(k.size-1)   # need to put in a check to make sure that it is log sampled 
+			raise ValueError('Input array must contain an even number of elements.')			
 		
 		if(n_pad != None):
 			
@@ -138,10 +131,10 @@ class FASTPT:
 			k=np.hstack((k_left,k,k_right))
 			n_pad_check=int(np.log(2)/delta_L) +1
 			if (n_pad < n_pad_check): 
-				print('Warning, you should consider increasing your zero padding to at least ', n_pad_check, ' .')
-				print('So, that you ensure that k > 2k_min.')
-				print(' k min in the FASTPT universe is ', k[0], ' while k min input is ', self.k_old[0])
-		  
+				print('*** Warning ***')
+				print('You should consider increasing your zero padding to at least ', n_pad_check)
+				print('to ensure that the minimum k_output is > 2k_min in the FASTPT universe.')
+				print('k_min in the FASTPT universe is ', k[0], ' while k_min_input is ', self.k_old[0])		  
 		
 		
 					  
@@ -163,68 +156,187 @@ class FASTPT:
 		self.l=np.arange(-self.n_l//2+1,self.n_l//2+1)
 		self.tau_l=omega*self.l
 		
-		self.dd_bias=False # set to False, unless asked for in the to_do list 
-		for i in range(len(to_do)):                 
-			if to_do[i]=='one_loop_dd':
-				nu=-2
-				# parameter matrix for 1-loop calculations 
-				param_mat=np.array([[0,0,0,0],[0,0,2,0],[0,0,4,0],[2,-2,2,0],\
-							[1,-1,1,0],[1,-1,3,0],[2,-2,0,1] ])
+		self.dd_do=False
+		self.dd_bias_do=False
+		self.IA_tt_do=False
+		self.IA_ta_do=False
+		self.IA_mix_do=False	
+		self.OV_do=False
+		self.kPol_do=False
+		self.RSD_do=False	
+		
+		for entry in to_do: #convert to_do list to instructions for FAST-PT initialization
+			if entry=='one_loop_dd':
+				self.dd_do=True
+				continue
+			elif entry=='dd_bias':
+				self.dd_do=True
+				self.dd_bias_do=True
+				continue
+			elif entry=='IA_all' or entry=='IA':
+				self.IA_tt_do=True
+				self.IA_ta_do=True
+				self.IA_mix_do=True
+				continue		
+			elif entry=='IA_tt':
+				self.IA_tt_do=True
+				continue
+			elif entry=='IA_ta':
+				self.IA_ta_do=True
+				continue		
+			elif entry=='IA_mix':
+				self.IA_mix_do=True
+				continue
+			elif entry=='OV':
+				self.OV_do=True
+				continue
+			elif entry=='kPol':
+				self.kPol_do=True
+				continue									
+			elif entry=='RSD':
+				self.RSD_do=True
+				continue
+			elif entry=='sig4':
+				self.dd_do=True
+				continue
+			elif entry=='all' or entry=='everything':
+				self.dd_do=True
+				self.dd_bias_do=True
+				self.IA_tt_do=True
+				self.IA_ta_do=True
+				self.IA_mix_do=True
+				self.OV_do=True
+				self.kPol_do=True
+				self.RSD_do=True
+				continue
+			else:
+				raise ValueError('FAST-PT does not recognize "'+entry+'" in the to_do list.') 
+		
+		### INITIALIZATION of k-grid quantities ###
+		if self.dd_do:
+			nu=-2
+			# parameter matrix for 1-loop calculations 
+			p_mat=np.array([[0,0,0,0],[0,0,2,0],[0,0,4,0],[2,-2,2,0],\
+						[1,-1,1,0],[1,-1,3,0],[2,-2,0,1] ])
 
-				self.X_spt=scalar_stuff(param_mat,nu,self.N,self.m,self.eta_m,self.l,self.tau_l)
+			self.X_spt=scalar_stuff(p_mat,nu,self.N,self.m,self.eta_m,self.l,self.tau_l)
+		
+		if self.IA_tt_do:
+			hE_tab,hB_tab=IA_tt()
+			p_mat_E=hE_tab[:,[0,1,5,6,7,8,9]]
+			p_mat_B=hB_tab[:,[0,1,5,6,7,8,9]]
 
-			if to_do[i]=='dd_bias':
-				self.dd_bias=True 
+			self.X_IA_E=tensor_stuff(p_mat_E,self.N,self.m,self.eta_m,self.l,self.tau_l)
+			self.X_IA_B=tensor_stuff(p_mat_B,self.N,self.m,self.eta_m,self.l,self.tau_l)
+
+		if self.IA_mix_do:
+			IA_A_tab = IA_A()
+			IA_DEE_tab = IA_DEE()
+			IA_DBB_tab = IA_DBB()
+			p_mat_A=IA_A_tab[:,[0,1,5,6,7,8,9]]
+			p_mat_DEE=IA_DEE_tab[:,[0,1,5,6,7,8,9]]
+			p_mat_DBB=IA_DBB_tab[:,[0,1,5,6,7,8,9]]
+
+			self.X_IA_A=tensor_stuff(p_mat_A,self.N,self.m,self.eta_m,self.l,self.tau_l)
+			self.X_IA_DEE=tensor_stuff(p_mat_DEE,self.N,self.m,self.eta_m,self.l,self.tau_l)
+			self.X_IA_DBB=tensor_stuff(p_mat_DBB,self.N,self.m,self.eta_m,self.l,self.tau_l)
+
+		if self.IA_ta_do:
+			IA_deltaE1_tab = IA_deltaE1()
+			IA_0E0E_tab = IA_0E0E()
+			IA_0B0B_tab = IA_0B0B()
+			p_mat_deltaE1=IA_deltaE1_tab[:,[0,1,5,6,7,8,9]]
+			p_mat_0E0E=IA_0E0E_tab[:,[0,1,5,6,7,8,9]]
+			p_mat_0B0B=IA_0B0B_tab[:,[0,1,5,6,7,8,9]]
+			self.X_IA_deltaE1=tensor_stuff(p_mat_deltaE1,self.N,self.m,self.eta_m,self.l,self.tau_l)
+			self.X_IA_0E0E=tensor_stuff(p_mat_0E0E,self.N,self.m,self.eta_m,self.l,self.tau_l)
+			self.X_IA_0B0B=tensor_stuff(p_mat_0B0B,self.N,self.m,self.eta_m,self.l,self.tau_l)
+
+		if self.OV_do:
+			# For OV, we can use two different values for 
+			# nu1=0 and nu2=-2 
 			
-			if to_do[i]=='IA':
-				
-				hE_tab,hB_tab=IA()
-				p_mat_E=hE_tab[:,[0,1,5,6,7,8,9]]
-				p_mat_B=hB_tab[:,[0,1,5,6,7,8,9]]
+			OV_tab=OV()
+			p_mat=OV_tab[:,[0,1,5,6,7,8,9]]
 
-				self.X_IA_E=tensor_stuff(p_mat_E,self.N,self.m,self.eta_m,self.l,self.tau_l)
-				self.X_IA_B=tensor_stuff(p_mat_B,self.N,self.m,self.eta_m,self.l,self.tau_l)
+			self.X_OV=tensor_stuff(p_mat,self.N,self.m,self.eta_m,self.l,self.tau_l)
+			
+		if self.kPol_do:
+					
+			tab1,tab2,tab3=kPol()
+			p_mat=tab1[:,[0,1,5,6,7,8,9]]
+			self.X_kP1=tensor_stuff(p_mat,self.N,self.m,self.eta_m,self.l,self.tau_l)
+							
+			p_mat=tab2[:,[0,1,5,6,7,8,9]]
+			self.X_kP2=tensor_stuff(p_mat,self.N,self.m,self.eta_m,self.l,self.tau_l)
+							
+			p_mat=tab3[:,[0,1,5,6,7,8,9]]
+			self.X_kP3=tensor_stuff(p_mat,self.N,self.m,self.eta_m,self.l,self.tau_l)
 
-
-			if to_do[i]=='OV':
-				# For OV, we can use two different values for 
-				# nu1=0 and nu2=-2 
-				
-				OV_tab=OV()
-				p_mat=OV_tab[:,[0,1,5,6,7,8,9]]
+		if self.RSD_do:
+			
+			tabA,self.A_coeff=RSDA()
+			p_mat=tabA[:,[0,1,5,6,7,8,9]]
+			self.X_RSDA=tensor_stuff(p_mat,self.N,self.m,self.eta_m,self.l,self.tau_l)	
+			
+			tabB,self.B_coeff=RSDB()
+			p_mat=tabB[:,[0,1,5,6,7,8,9]]
+			self.X_RSDB=tensor_stuff(p_mat,self.N,self.m,self.eta_m,self.l,self.tau_l)	
 	
-				self.X_OV=tensor_stuff(p_mat,self.N,self.m,self.eta_m,self.l,self.tau_l)
-
-				
-			if to_do[i]=='kPol':
-						
-				tab1,tab2,tab3=kPol()
-				p_mat=tab1[:,[0,1,5,6,7,8,9]]
-				self.X_kP1=tensor_stuff(p_mat,self.N,self.m,self.eta_m,self.l,self.tau_l)
-								
-				p_mat=tab2[:,[0,1,5,6,7,8,9]]
-				self.X_kP2=tensor_stuff(p_mat,self.N,self.m,self.eta_m,self.l,self.tau_l)
-								
-				p_mat=tab3[:,[0,1,5,6,7,8,9]]
-				self.X_kP3=tensor_stuff(p_mat,self.N,self.m,self.eta_m,self.l,self.tau_l)
-				
-				
-				
-			if to_do[i]=='RSD':
-				
-				
-				tabA,self.A_coeff=RSDA()
-				p_mat=tabA[:,[0,1,5,6,7,8,9]]
-				self.X_RSDA=tensor_stuff(p_mat,self.N,self.m,self.eta_m,self.l,self.tau_l)	
-				
-				tabB,self.B_coeff=RSDB()
-				p_mat=tabB[:,[0,1,5,6,7,8,9]]
-				self.X_RSDB=tensor_stuff(p_mat,self.N,self.m,self.eta_m,self.l,self.tau_l)			
-
-				
-				
-						
+	### Top-level functions to output final quantities ###					
 	def one_loop_dd(self,P,P_window=None,C_window=None):
+		# routine for one-loop DM SPT calculations 	
+		nu=-2
+	
+		# coefficents for one_loop calculation 
+		one_loop_coef=np.array([2*1219/1470.,2*671/1029.,2*32/1715.,2*1/3.,2*62/35.,2*8/35.,1/3.])
+
+		# get the roundtrip Fourier power spectrum, i.e. P=IFFT[FFT[P]]
+		# get the matrix for each J_k component 
+		Ps,mat=self.J_k_scalar(P,self.X_spt,nu,P_window=P_window,C_window=C_window)
+
+		P22_mat=np.multiply(one_loop_coef,np.transpose(mat))
+		P22=np.sum(P22_mat,1)
+		P13=P_13_reg(self.k_old,Ps)
+		P_1loop=P22+P13
+		
+		if (self.dd_bias_do):
+			# if dd_bias is in to_do, this function acts like one_loop_dd_bias
+			
+			# Quadraric bias Legendre components
+			# See eg section B of Baldauf+ 2012 (arxiv: 1201.4827)
+			# Note pre-factor convention is not standardized
+			# Returns relevant correlations (including contraction factors),
+			# but WITHOUT bias values and other pre-factors.
+			# Uses standard "full initialization" of J terms
+			sig4=np.trapz(self.k_old**3*Ps**2,x=np.log(self.k_old))/(2.*pi**2)
+			# sig4 much more accurate when calculated in logk, especially for low-res input.
+			
+			Pd1d2=2.*(17./21*mat[0,:]+mat[4,:]+4./21*mat[1,:])
+			Pd2d2=2.*(mat[0,:])
+			Pd1s2=2.*(8./315*mat[0,:]+4./15*mat[4,:]+254./441*mat[1,:]+2./5*mat[5,:]+16./245*mat[2,:])
+			Pd2s2=2.*(2./3*mat[1,:])
+			Ps2s2=2.*(4./45*mat[0,:]+8./63*mat[1,:]+8./35*mat[2,:])
+			if (self.extrap):
+				_, Ps=self.EK.PK_original(Ps)
+				_, P_1loop=self.EK.PK_original(P_1loop)
+				_, Pd1d2=self.EK.PK_original(Pd1d2)
+				_, Pd2d2=self.EK.PK_original(Pd2d2)
+				_, Pd1s2=self.EK.PK_original(Pd1s2)
+				_, Pd2s2=self.EK.PK_original(Pd2s2)
+				_, Ps2s2=self.EK.PK_original(Ps2s2)
+			
+			return P_1loop, Ps, Pd1d2, Pd2d2, Pd1s2, Pd2s2, Ps2s2, sig4
+
+		
+		if (self.extrap):
+			_, Ps=self.EK.PK_original(Ps)
+			_, P_1loop=self.EK.PK_original(P_1loop)
+
+		return P_1loop, Ps
+
+
+	def one_loop_dd_bias(self,P,P_window=None,C_window=None):
 		nu=-2
 	
 		# routine for one-loop spt calculations 
@@ -239,39 +351,41 @@ class FASTPT:
 		P22_mat=np.multiply(one_loop_coef,np.transpose(mat))
 		P22=np.sum(P22_mat,1)
 		P13=P_13_reg(self.k_old,Ps)
-
-		if (self.dd_bias):
-			# Quadraric bias Legendre components
-			# See eg section B of Baldauf+ 2012 (arxiv: 1201.4827)
-			# Note pre-factor convention is not standardized
-			# Returns relevant correlations (including contraction factors),
-			# but WITHOUT bias values and other pre-factors.
-			# Uses standard "full initialization" of J terms
-			sig4=np.trapz(self.k_old**2*Ps**2,x=self.k_old)/(2.*pi**2)
-			Pd1d2=2.*(17./21*mat[0,:]+mat[4,:]+4./21*mat[1,:])
-			Pd2d2=2.*(mat[0,:])
-			Pd1s2=2.*(8./315*mat[0,:]+4./15*mat[4,:]+254./441*mat[1,:]+2./5*mat[5,:]+16./245*mat[2,:])
-			Pd2s2=2.*(2./3*mat[1,:])
-			Ps2s2=2.*(4./45*mat[0,:]+8./63*mat[1,:]+8./35*mat[2,:])
-			P_1loop=P22+P13
-			if (self.extrap):
-				_, Ps=self.EK.PK_original(Ps)
-				_, P_1loop=self.EK.PK_original(P_1loop)
-				_, Pd1d2=self.EK.PK_original(Pd1d2)
-				_, Pd2d2=self.EK.PK_original(Pd2d2)
-				_, Pd1s2=self.EK.PK_original(Pd1s2)
-				_, Pd2s2=self.EK.PK_original(Pd2s2)
-				_, Ps2s2=self.EK.PK_original(Ps2s2)
-			
-			return P_1loop, Pd1d2, Pd2d2, Pd1s2, Pd2s2, Ps2s2, sig4, Ps
+		P_1loop=P22+P13
+		
+		# Quadraric bias Legendre components
+		# See eg section B of Baldauf+ 2012 (arxiv: 1201.4827)
+		# Note pre-factor convention is not standardized
+		# Returns relevant correlations (including contraction factors),
+		# but WITHOUT bias values and other pre-factors.
+		# Uses standard "full initialization" of J terms
+		sig4=np.trapz(self.k_old**3*Ps**2,x=np.log(self.k_old))/(2.*pi**2)
+		Pd1d2=2.*(17./21*mat[0,:]+mat[4,:]+4./21*mat[1,:])
+		Pd2d2=2.*(mat[0,:])
+		Pd1s2=2.*(8./315*mat[0,:]+4./15*mat[4,:]+254./441*mat[1,:]+2./5*mat[5,:]+16./245*mat[2,:])
+		Pd2s2=2.*(2./3*mat[1,:])
+		Ps2s2=2.*(4./45*mat[0,:]+8./63*mat[1,:]+8./35*mat[2,:])
 		
 		if (self.extrap):
-			_,P_1loop=self.EK.PK_original(P22+P13)
-			return P_1loop
-		return P22 + P13
+			_, Ps=self.EK.PK_original(Ps)
+			_, P_1loop=self.EK.PK_original(P_1loop)
+			_, Pd1d2=self.EK.PK_original(Pd1d2)
+			_, Pd2d2=self.EK.PK_original(Pd2d2)
+			_, Pd1s2=self.EK.PK_original(Pd1s2)
+			_, Pd2s2=self.EK.PK_original(Pd2s2)
+			_, Ps2s2=self.EK.PK_original(Ps2s2)
 
-	
-	def IA(self,P,P_window=None,C_window=None):
+		return P_1loop, Ps, Pd1d2, Pd2d2, Pd1s2, Pd2s2, Ps2s2, sig4 #new,for consistency
+
+	def sig4(self,P,P_window=None,C_window=None):
+		# returns the integral of P(k)^2 which provides the k->0 limit (up to a pre-factor)
+		# for several of the quadratic biasing and IA contributions.
+		nu=-2
+		Ps,mat=self.J_k_scalar(P,self.X_spt,nu,P_window=P_window,C_window=C_window)
+		sig4=np.trapz(self.k_old**3*Ps**2,x=np.log(self.k_old))/(2.*pi**2)
+		return sig4
+		
+	def IA_tt(self,P,P_window=None,C_window=None):
 		
 		P_E,A=self.J_k_tensor(P,self.X_IA_E,P_window=P_window,C_window=C_window)
 		if (self.extrap):
@@ -280,9 +394,44 @@ class FASTPT:
 		P_B,A=self.J_k_tensor(P,self.X_IA_B,P_window=P_window,C_window=C_window)
 		if (self.extrap):
 			_,P_B=self.EK.PK_original(P_B)
-		return P_E, P_B
+		return 2.*P_E, 2.*P_B
+	
+	def IA_mix(self,P,P_window=None,C_window=None):
+		
+		P_A,A=self.J_k_tensor(P,self.X_IA_A,P_window=P_window,C_window=C_window)
+		if (self.extrap):
+			_,P_A=self.EK.PK_original(P_A)
 
-				
+		P_Btype2=P_IA_B(self.k_original,P)	
+
+		P_DEE,A=self.J_k_tensor(P,self.X_IA_DEE,P_window=P_window,C_window=C_window)
+		if (self.extrap):
+			_,P_DEE=self.EK.PK_original(P_DEE)
+
+		P_DBB,A=self.J_k_tensor(P,self.X_IA_DBB,P_window=P_window,C_window=C_window)
+		if (self.extrap):
+			_,P_DBB=self.EK.PK_original(P_DBB)
+
+		return 2*P_A, 4*P_Btype2, 2*P_DEE, 2*P_DBB
+	
+	def IA_ta(self,P,P_window=None,C_window=None):
+		
+		P_deltaE1,A=self.J_k_tensor(P,self.X_IA_deltaE1,P_window=P_window,C_window=C_window)
+		if (self.extrap):
+			_,P_deltaE1=self.EK.PK_original(P_deltaE1)
+
+		P_deltaE2=P_IA_deltaE2(self.k_original,P)	
+
+		P_0E0E,A=self.J_k_tensor(P,self.X_IA_0E0E,P_window=P_window,C_window=C_window)
+		if (self.extrap):
+			_,P_0E0E=self.EK.PK_original(P_0E0E)
+
+		P_0B0B,A=self.J_k_tensor(P,self.X_IA_0B0B,P_window=P_window,C_window=C_window)
+		if (self.extrap):
+			_,P_0B0B=self.EK.PK_original(P_0B0B)
+
+		return 2.*P_deltaE1, 2.*P_deltaE2, P_0E0E, P_0B0B
+			
 	def OV(self,P,P_window=None,C_window=None):
 		P,A=self.J_k_tensor(P,self.X_OV,P_window=P_window,C_window=C_window)
 		if (self.extrap):
@@ -348,10 +497,11 @@ class FASTPT:
 	def RSD_ABsum_mu(self,P,f,mu_n,P_window=None,C_window=None):
 		ABsum_mu2,ABsum_mu4,ABsum_mu6,ABsum_mu8 = self.RSD_ABsum_components(P,f,P_window,C_window)
 		ABsum = ABsum_mu2*mu_n**2 + ABsum_mu4*mu_n**4 + ABsum_mu6*mu_n**6 + ABsum_mu8*mu_n**8
-		return ABsum
+		return ABsum	
+
 		
 	######################################################################################
-	# functions that use the older version structures. 
+	### functions that use the older version structures. ###
 	def one_loop(self,P,P_window=None,C_window=None):
 
 	    return self.pt_simple.one_loop(P,P_window=P_window,C_window=C_window)
@@ -361,7 +511,7 @@ class FASTPT:
 		return self.pt_simple.P_bias(P,P_window=P_window,C_window=C_window)
 
 	######################################################################################
-
+	### Core functions used by top-level functions ###
 	def J_k_scalar(self,P_in,X,nu,P_window=None,C_window=None):
 		
 		pf, p, g_m, g_n, two_part_l, h_l=X  
@@ -374,30 +524,21 @@ class FASTPT:
 		
 		P_b=P_in*self.k_old**(-nu)
 		
-		
-		# if P_window is not None:
-		# # window the input power spectrum, so that at high and low k
-		# # the signal smoothly tappers to zero. This makes the input
-		# # more "like" a periodic signal 
-			
-		#   if (self.verbose):
-		#       print('windowing biased power spectrum')
-		#   W=p_window(self.k_old,P_window[0],P_window[1])
-		#   P_b=P_b*W 
+
 
 		if (self.n_pad is not None): 
 			P_b=np.pad(P_b, pad_width=(self.n_pad,self.n_pad), mode='constant', constant_values=0)
 
 		c_m_positive=rfft(P_b)
 		# We always filter the Fourier coefficients, so the last element is zero.
-		# But, in case someone does not filter, divide the end point by two 
+		# But in case someone does not filter, divide the end point by two 
 		c_m_positive[-1]=c_m_positive[-1]/2.
 		c_m_negative=np.conjugate(c_m_positive[1:])
 		c_m=np.hstack((c_m_negative[::-1], c_m_positive))/float(self.N)
 		
 		if (C_window != None):
 			# Window the Fourier coefficients. 
-			# This will damping the highest frequencies 
+			# This will damp the highest frequencies 
 			
 			if (self.verbose):
 				print('windowing the Fourier coefficients')
@@ -455,8 +596,8 @@ class FASTPT:
 			
 			if (P_window != None):
 			# window the input power spectrum, so that at high and low k
-			# the signal smoothly tappers to zero. This make the input
-			# more "like" a periodic signal 
+			# the signal smoothly tapers to zero. This makes the input
+			# more like a periodic signal 
 			
 				if (self.verbose):
 					print('windowing biased power spectrum')
@@ -515,10 +656,15 @@ class FASTPT:
 		return P_fin, A_out
 		
 		
-
+### Example script ###
 if __name__ == "__main__":
-	# An example script to run FASTPT for (P_22 + P_13) and IA.
-	# Makes a plot for P_22 + P_13.
+	# An example script to run FASTPT
+	# Initializes and calculates all quantities supported by FASTPT
+	# Makes a plot for P_22 + P_13
+	from time import time
+	
+	#Version check
+	print('This is FAST-PT version', __version__)
 	
 	# load the data file 
 	
@@ -529,28 +675,36 @@ if __name__ == "__main__":
 	# set the parameters for the power spectrum window and
 	# Fourier coefficient window 
 	#P_window=np.array([.2,.2])  
-	C_window=.75    
+	C_window=.75
+	#document this better in the user manual    
 	
 	# padding length 
-	n_pad=1000
-	to_do=['one_loop_dd','IA']
-	
-	from time import time
-		
+	n_pad=int(0.5*len(k))
+	to_do=['all']
+				
 	# initialize the FASTPT class 
 	# including extrapolation to higher and lower k  
-	fastpt=FASTPT(k,to_do=to_do,low_extrap=-5,high_extrap=3,n_pad=n_pad) 
-	
+	# time the operation
 	t1=time()
+	fastpt=FASTPT(k,to_do=to_do,low_extrap=-5,high_extrap=3,n_pad=n_pad) 
+	t2=time()
+	
 	# calculate 1loop SPT (and time the operation)
 	P_spt=fastpt.one_loop_dd(P,C_window=C_window)
 		
-	t2=time()
-	print('time'), t2-t1
-
+	t3=time()
+	print('initialization time for', to_do, "%10.3f" %(t2-t1), 's')
+	print('one_loop_dd recurring time', "%10.3f" %(t3-t2), 's')
+	
 	#calculate tidal torque EE and BB P(k)
-	P_IA=fastpt.IA(P,C_window=C_window)
-		
+	P_IA_tt=fastpt.IA_tt(P,C_window=C_window)
+	P_IA_ta=fastpt.IA_ta(P,C_window=C_window)
+	P_IA_mix=fastpt.IA_mix(P,C_window=C_window)
+	P_RSD=fastpt.RSD_components(P,1.0,C_window=C_window)	
+	P_kPol=fastpt.kPol(P,C_window=C_window)
+	P_OV=fastpt.OV(P,C_window=C_window)	
+	sig4=fastpt.sig4(P,C_window=C_window)
+
 	# make a plot of 1loop SPT results
 	import matplotlib.pyplot as plt
 	
@@ -561,7 +715,7 @@ if __name__ == "__main__":
 	ax.set_xlabel(r'$k$', size=30)
 	
 	ax.plot(k,P,label='linear')
-	ax.plot(k,P_spt, label=r'$P_{22}(k) + P_{13}(k)$' )
+	ax.plot(k,P_spt[0], label=r'$P_{22}(k) + P_{13}(k)$' )
 		
 	plt.legend(loc=3) 
 	plt.grid()

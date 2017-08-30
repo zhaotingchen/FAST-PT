@@ -23,7 +23,7 @@ P=d_extend[:-1,1]
 
 
 P_window=np.array([.2,.2])  
-C_window=.065
+C_window=.65
 n_pad=1000
 # initialize the FASTPT class		
 fastpt=FASTPT.FASTPT(k,to_do=['kPol'],low_extrap=-6,high_extrap=4,n_pad=n_pad) 

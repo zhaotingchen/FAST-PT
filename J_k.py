@@ -135,7 +135,7 @@ def J_k(k,P,param_matrix,nu=-2,P2=None,P_window=None, C_window=None,n_pad=500,ve
 			g_n=gamsn(Q_n)
 		
 			#two_part_m=2**Q_m
-			g_m=g_m*2**Q_m
+			g_m=g_m*2.**Q_m
 	
 			# prefactor 
 			pf=(-1)**l_Bessel[i]/pi**3*np.sqrt(pi/2.)
@@ -145,7 +145,7 @@ def J_k(k,P,param_matrix,nu=-2,P2=None,P_window=None, C_window=None,n_pad=500,ve
 		else:
 			g_n=g_m_vals(sigma,Q_n)
 			# pre factor 
-			pf=(-1)**l_Bessel[i]/pi**2*2**(2+2*nu+alpha[i]+beta[i])
+			pf=(-1)**l_Bessel[i]/pi**2*2.**(2+2*nu+alpha[i]+beta[i])
 			
 			two_part_l=exp(1j*tau_l*log2)
 
