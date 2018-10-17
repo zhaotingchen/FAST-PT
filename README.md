@@ -1,6 +1,6 @@
 # FAST-PT
 
-FASTPT is a code to calculate quantities in cosmological perturbation theory at 1-loop (including, e.g., corrections to the matter power spectrum). 
+FAST-PT is a code to calculate quantities in cosmological perturbation theory at 1-loop (including, e.g., corrections to the matter power spectrum). 
 The code utilizes Fourier methods combined with analytic expressions to reduce the computation time
 to scale as N log N, where N is the number of grid points in the input linear power spectrum. 
 
@@ -14,5 +14,7 @@ FAST-PT way to get started:
 
 See the user_manual.pdf for more details. 
 
-Our papers (arXiv:1603.04826 and arXiv:1609.05978) describe the FAST-PT algorithm and implementation. Please cite these papers when using FAST-PT in your research.
+Our papers (JCAP 2016, 9, 15; arXiv:1603.04826) and (JCAP 2017, 2, 30; arXiv:1609.05978) describe the FAST-PT algorithm and implementation. Please cite these papers when using FAST-PT in your research. For the intrinsic alignment implementation, cite arXiv:1708.09247.
+
+FAST-PT is under continued development and should be considered research in progress. FAST-PT is open source and distributed with the [MIT license](https://opensource.org/licenses/mit). If you have comments, questions, or feedback, please file an [issue](https://github.com/JoeMcEwen/FAST-PT/issues).
 
