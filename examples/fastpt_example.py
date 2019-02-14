@@ -62,6 +62,10 @@ ax.set_xlabel(r'$k$', size=30)
 
 ax.plot(k,P,label='linear')
 ax.plot(k,P_spt[0], label=r'$P_{22}(k) + P_{13}(k)$' )
+ax.plot(k,P_IA_mix[0])
+ax.plot(k,-1*P_IA_mix[0],'--')
+ax.plot(k,P_IA_mix[1])
+ax.plot(k,-1*P_IA_mix[1],'--')
 
 plt.legend(loc=3)
 plt.grid()
