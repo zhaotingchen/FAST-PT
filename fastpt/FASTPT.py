@@ -620,3 +620,74 @@ class FASTPT:
 			P_fin=P_fin[self.id_pad]
 
 		return P_fin, A_out
+		
+### Example script ###
+if __name__ == "__main__":
+	# An example script to run FASTPT
+	# Initializes and calculates all quantities supported by FASTPT
+	# Makes a plot for P_22 + P_13
+	from time import time
+	
+	#Version check
+	print('This is FAST-PT version', __version__)
+	
+	# load the data file 
+	
+	d=np.loadtxt('Pk_test.dat') 
+	# declare k and the power spectrum 
+	k=d[:,0]; P=d[:,1]
+	
+	# set the parameters for the power spectrum window and
+	# Fourier coefficient window 
+	#P_window=np.array([.2,.2])  
+	C_window=.75
+	#document this better in the user manual    
+	
+	# padding length 
+	n_pad=int(0.5*len(k))
+	to_do=['all']
+				
+	# initialize the FASTPT class 
+	# including extrapolation to higher and lower k  
+	# time the operation
+	t1=time()
+	fastpt=FASTPT(k,to_do=to_do,low_extrap=-5,high_extrap=3,n_pad=n_pad) 
+	t2=time()
+	
+	# calculate 1loop SPT (and time the operation)
+	P_spt=fastpt.one_loop_dd(P,C_window=C_window)
+		
+	t3=time()
+	print('initialization time for', to_do, "%10.3f" %(t2-t1), 's')
+	print('one_loop_dd recurring time', "%10.3f" %(t3-t2), 's')
+	
+	#calculate tidal torque EE and BB P(k)
+	P_IA_tt=fastpt.IA_tt(P,C_window=C_window)
+	P_IA_ta=fastpt.IA_ta(P,C_window=C_window)
+	P_IA_mix=fastpt.IA_mix(P,C_window=C_window)
+	P_RSD=fastpt.RSD_components(P,1.0,C_window=C_window)	
+	P_kPol=fastpt.kPol(P,C_window=C_window)
+	P_OV=fastpt.OV(P,C_window=C_window)	
+	sig4=fastpt.sig4(P,C_window=C_window)
+
+	# make a plot of 1loop SPT results
+	import matplotlib.pyplot as plt
+	
+	ax=plt.subplot(111)
+	ax.set_xscale('log')
+	ax.set_yscale('log')
+	ax.set_ylabel(r'$P(k)$', size=30)
+	ax.set_xlabel(r'$k$', size=30)
+	
+	ax.plot(k,P,label='linear')
+	ax.plot(k,P_spt[0], label=r'$P_{22}(k) + P_{13}(k)$' )
+	ax.plot(k,P_spt[1], label=r'linear' )
+	ax.plot(k,P_spt[2], label=r'b1b2' )
+	ax.plot(k,P_spt[3], label=r'b2b2' )
+	ax.plot(k,abs(P_spt[4]), label=r'b1bs' )
+	ax.plot(k,P_spt[5], label=r'b2bs' )
+	ax.plot(k,P_spt[6], label=r'bsbs' )
+		
+	plt.legend(loc=3) 
+	plt.grid()
+	plt.show()
