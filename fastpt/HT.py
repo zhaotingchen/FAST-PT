@@ -231,7 +231,7 @@ def r_to_k(r,f_r,alpha_k, beta_r, mu, pf,q=0):
 if __name__=='__main__':
 	# load Jonathan's power spectrum 	
 	#data=np.loadtxt('Pk_fine.dat')
-	data=np.loadtxt('Pk_Planck15.dat')
+	data=np.loadtxt('../examples/Pk_Planck15.dat')
 	#data=np.loadtxt('TSPT_out_z_1.5.dat')
 	id=np.arange(data.shape[0])
 	#id=id[::20]  # downsample factor 
@@ -285,9 +285,9 @@ if __name__=='__main__':
 	ax.set_ylabel(r'log(ratio)', size=30)
 	#ax.set_ylim(.99,1.01)
 
-	#Delta=log(ZZ)-log(P)
+	Delta=log(ZZ)-log(P)
 	# plot the ratio of the original and roundtrip power spectrum 
-	#ax.plot(k,Delta, color='red', label='fftlog python' )
+	ax.plot(k,Delta, color='red', label='fftlog python' )
 	plt.grid()
 	
 	plt.show()
