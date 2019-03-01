@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import fastpt as fpt
-from fastpt.FASTPT import FASTPT
+from fastpt import FASTPT
 
 #Version check
 print('This is FAST-PT version', fpt.__version__)
