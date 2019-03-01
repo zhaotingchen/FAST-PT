@@ -15,6 +15,8 @@ from time import time
 from numpy import gradient as grad
 import sys
 
+from gamma_funcs import g_m_vals
+
 log2=log(2)
 
 def asym_raised(k,log_k_left,log_k_right):
@@ -78,16 +80,19 @@ def get_k0(N,mu,q,r0,L,k0):
 def u_m_vals(m,mu,q,kr,L):
 
 	x=q + 1j*2*pi*m/L
-	
+
 	alpha_plus=(mu+1+x)/2.
 	alpha_minus=(mu+1-x)/2.
 		
 	rp, phip=log_gamma(alpha_plus) 
 	rm, phim=log_gamma(alpha_minus) 
+
+	# log_r=q*log2 + rp - rm 
+	# phi=2*pi*m/L*log(2./kr) + phip - phim 
 	
-	log_r=q*log2 + rp - rm 
-	phi=2*pi*m/L*log(2./kr) + phip - phim 
-	
+	log_r = rp - rm
+	phi = phip - phim
+
 	real_part=exp(log_r)*cos(phi)
 	imag_part=exp(log_r)*sin(phi) 
 	
@@ -164,6 +169,7 @@ def fft_log(k,f_k,q,mu):
 			
 
 	u_m=u_m_vals(m,mu,q,kr,L)
+	# u_m=g_m_vals(mu,q + 1j*2*pi*m/L)
 
 	b=c_m*u_m
 		

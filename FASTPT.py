@@ -716,6 +716,12 @@ if __name__ == "__main__":
 	
 	ax.plot(k,P,label='linear')
 	ax.plot(k,P_spt[0], label=r'$P_{22}(k) + P_{13}(k)$' )
+	ax.plot(k,P_spt[1], label=r'linear' )
+	ax.plot(k,P_spt[2], label=r'b1b2' )
+	ax.plot(k,P_spt[3], label=r'b2b2' )
+	ax.plot(k,abs(P_spt[4]), label=r'b1bs' )
+	ax.plot(k,P_spt[5], label=r'b2bs' )
+	ax.plot(k,P_spt[6], label=r'bsbs' )
 		
 	plt.legend(loc=3) 
 	plt.grid()
