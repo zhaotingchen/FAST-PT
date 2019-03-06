@@ -15,7 +15,7 @@ from time import time
 from numpy import gradient as grad
 import sys
 
-from gamma_funcs import g_m_vals
+from fastpt.gamma_funcs import g_m_vals
 
 log2=log(2)
 
