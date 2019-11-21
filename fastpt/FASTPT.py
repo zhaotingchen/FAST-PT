@@ -333,6 +333,7 @@ class FASTPT:
             # but WITHOUT bias values and other pre-factors.
             # Uses standard "full initialization" of J terms
             sig4 = np.trapz(self.k_old ** 3 * Ps ** 2, x=np.log(self.k_old)) / (2. * pi ** 2)
+            self.sig4 = sig4
             # sig4 much more accurate when calculated in logk, especially for low-res input.
 
             Pd1d2 = 2. * (17. / 21 * mat[0, :] + mat[4, :] + 4. / 21 * mat[1, :])
@@ -882,12 +883,12 @@ if __name__ == "__main__":
     # initialize the FASTPT class
     # including extrapolation to higher and lower k
     t1 = time()
-    fastpt = FASTPT(k, to_do=to_do, low_extrap=-5, high_extrap=3, n_pad=n_pad)
+    fpt = FASTPT(k, to_do=to_do, low_extrap=-5, high_extrap=3, n_pad=n_pad)
 
     t2 = time()
     # calculate 1loop SPT (and time the operation)
     # P_spt=fastpt.one_loop_dd(P,C_window=C_window)
-    P_lpt = fastpt.one_loop_dd_bias_lpt(P, C_window=C_window)
+    P_lpt = fpt.one_loop_dd_bias_lpt(P, C_window=C_window)
 
     # for M = 10**14 M_sun/h
     b1L = 1.02817

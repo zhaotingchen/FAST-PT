@@ -33,24 +33,24 @@ to_do=['all']
 # including extrapolation to higher and lower k
 # time the operation
 t1=time()
-fastpt=FASTPT(k,to_do=to_do,low_extrap=-5,high_extrap=3,n_pad=n_pad)
+fpt=FASTPT(k,to_do=to_do,low_extrap=-5,high_extrap=3,n_pad=n_pad)
 t2=time()
 
 # calculate 1loop SPT (and time the operation)
-P_spt=fastpt.one_loop_dd(P,C_window=C_window)
+P_spt=fpt.one_loop_dd(P,C_window=C_window)
 
 t3=time()
 print('initialization time for', to_do, "%10.3f" %(t2-t1), 's')
 print('one_loop_dd recurring time', "%10.3f" %(t3-t2), 's')
 
 #calculate tidal torque EE and BB P(k)
-P_IA_tt=fastpt.IA_tt(P,C_window=C_window)
-P_IA_ta=fastpt.IA_ta(P,C_window=C_window)
-P_IA_mix=fastpt.IA_mix(P,C_window=C_window)
-P_RSD=fastpt.RSD_components(P,1.0,C_window=C_window)
-P_kPol=fastpt.kPol(P,C_window=C_window)
-P_OV=fastpt.OV(P,C_window=C_window)
-sig4=fastpt.sig4(P,C_window=C_window)
+P_IA_tt=fpt.IA_tt(P,C_window=C_window)
+P_IA_ta=fpt.IA_ta(P,C_window=C_window)
+P_IA_mix=fpt.IA_mix(P,C_window=C_window)
+P_RSD=fpt.RSD_components(P,1.0,C_window=C_window)
+P_kPol=fpt.kPol(P,C_window=C_window)
+P_OV=fpt.OV(P,C_window=C_window)
+sig4=fpt.sig4
 
 # make a plot of 1loop SPT results
 
@@ -62,10 +62,10 @@ ax.set_xlabel(r'$k$', size=30)
 
 ax.plot(k,P,label='linear')
 ax.plot(k,P_spt[0], label=r'$P_{22}(k) + P_{13}(k)$' )
-ax.plot(k,P_IA_mix[0])
-ax.plot(k,-1*P_IA_mix[0],'--')
-ax.plot(k,P_IA_mix[1])
-ax.plot(k,-1*P_IA_mix[1],'--')
+#ax.plot(k,P_IA_mix[0])
+#ax.plot(k,-1*P_IA_mix[0],'--')
+#ax.plot(k,P_IA_mix[1])
+#ax.plot(k,-1*P_IA_mix[1],'--')
 
 plt.legend(loc=3)
 plt.grid()
