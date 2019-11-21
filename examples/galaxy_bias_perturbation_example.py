@@ -1,18 +1,18 @@
-''' 
-    Example script to plot the 
+'''
+    Example script to plot the
     galaxy componets using the FASTPT algorithm.
-    
+
     Additionally the code also makes use of extending the power spectrum out
-    to higher and lower k to alliviate edge effects. 
-    
-    The parameters low_extrap and high_extrap control the extension of P_{lin}(k) 
+    to higher and lower k to alliviate edge effects.
+
+    The parameters low_extrap and high_extrap control the extension of P_{lin}(k)
     out to lower and higher k values by extrapolating using the effective power-law
-    index n_{eff}= dlogP/dlogk. 
-''' 
+    index n_{eff}= dlogP/dlogk.
+'''
 
 
 import numpy as np
-# example data 
+# example data
 d=np.loadtxt('P_bias_example.dat')
 #print('shape', d.shape)
 '''
@@ -33,25 +33,25 @@ d=np.loadtxt('P_bias_example.dat')
 # example use of FASTPTII
 k=d[:,0]; P_lin=d[:,1]
 
-import FASTPT
-from time import time 
-C_window=.65	
+from fastpt import FASTPT
+from time import time
+C_window=.65
 n_pad=1000
-		
-t1=time()	
+
+t1=time()
 # initialize the FASTPT class
 nu=-2
-fastpt=FASTPT.FASTPT(k,-2,n_pad=n_pad) 
+fastpt=FASTPT.FASTPT(k,-2,n_pad=n_pad)
 
-P_1loop=fastpt.one_loop(P_lin,C_window=C_window) 
-_,Pd1d2, Pd2d2, Pd1s2, Pd2s2, Ps2s2, sig4 =fastpt.P_bias(P_lin,C_window=C_window) 
+P_1loop=fastpt.one_loop(P_lin,C_window=C_window)
+_,Pd1d2, Pd2d2, Pd1s2, Pd2s2, Ps2s2, sig4 =fastpt.P_bias(P_lin,C_window=C_window)
 t2=time()
 print('The time to make density-density type power spectra is ', t2-t1,' .')
 
 
-# plot the output 
+# plot the output
 import matplotlib.gridspec as gridspec
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter, FormatStrFormatter
 gs = gridspec.GridSpec(2,3, height_ratios=[2,1.25])
 
@@ -93,8 +93,8 @@ ax2.tick_params(axis='both', width=2, length=10)
 ax2.tick_params(axis='both', which='minor', width=1, length=5)
 #ax2.xaxis.set_major_formatter(FormatStrFormatter('%2.2f'))
 ax2.xaxis.labelpad = 20
- 
- 
+
+
 ax2.plot(d[:,0],P_1loop/(d[:,2]+d[:,3]),lw=2, color='black', alpha=.5)
 plt.grid()
 
@@ -129,8 +129,8 @@ ax2.tick_params(axis='both', width=2, length=10)
 ax2.tick_params(axis='both', which='minor', width=1, length=5)
 #ax2.xaxis.set_major_formatter(FormatStrFormatter('%2.4f'))
 ax2.xaxis.labelpad = 20
- 
- 
+
+
 ax2.plot(k,Pd1d2/d[:,4], lw=2,color='black', alpha=.5, label=r'$b_1 b_2$, FAST-PT ' )
 ax2.plot(k,Pd2d2/d[:,5]/4., '--', lw=2,color='red', label=r'$b_2^2$, FAST-PT ' )
 plt.grid()
@@ -167,7 +167,7 @@ ax2.tick_params(axis='both', width=2, length=10)
 ax2.tick_params(axis='both', which='minor', width=1, length=5)
 #ax2.xaxis.set_major_formatter(FormatStrFormatter('%2.2f'))
 ax2.xaxis.labelpad = 20
- 
+
 ax2.plot(k,Pd1s2/d[:,12], lw=2, color='black', alpha=.5, label=r'$-b_1 b_s$, FAST-PT ' )
 ax2.plot(k,Pd2s2/d[:,13]/2., '--', lw=2,color='red', label=r'$b_2 b_s$, FAST-PT ' )
 ax2.plot(k,Ps2s2/d[:,6]/4., '-.', lw=2,color='blue', label=r'$b_s^2$, FAST-PT ' )

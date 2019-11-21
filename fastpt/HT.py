@@ -15,6 +15,8 @@ from time import time
 from numpy import gradient as grad
 import sys
 
+from fastpt.gamma_funcs import g_m_vals
+
 log2=log(2)
 
 def asym_raised(k,log_k_left,log_k_right):
@@ -78,16 +80,19 @@ def get_k0(N,mu,q,r0,L,k0):
 def u_m_vals(m,mu,q,kr,L):
 
 	x=q + 1j*2*pi*m/L
-	
+
 	alpha_plus=(mu+1+x)/2.
 	alpha_minus=(mu+1-x)/2.
 		
 	rp, phip=log_gamma(alpha_plus) 
 	rm, phim=log_gamma(alpha_minus) 
+
+	# log_r=q*log2 + rp - rm 
+	# phi=2*pi*m/L*log(2./kr) + phip - phim 
 	
-	log_r=q*log2 + rp - rm 
-	phi=2*pi*m/L*log(2./kr) + phip - phim 
-	
+	log_r = rp - rm
+	phi = phip - phim
+
 	real_part=exp(log_r)*cos(phi)
 	imag_part=exp(log_r)*sin(phi) 
 	
@@ -164,6 +169,7 @@ def fft_log(k,f_k,q,mu):
 			
 
 	u_m=u_m_vals(m,mu,q,kr,L)
+	# u_m=g_m_vals(mu,q + 1j*2*pi*m/L)
 
 	b=c_m*u_m
 		
@@ -231,7 +237,7 @@ def r_to_k(r,f_r,alpha_k, beta_r, mu, pf,q=0):
 if __name__=='__main__':
 	# load Jonathan's power spectrum 	
 	#data=np.loadtxt('Pk_fine.dat')
-	data=np.loadtxt('Pk_Planck15.dat')
+	data=np.loadtxt('../examples/Pk_Planck15.dat')
 	#data=np.loadtxt('TSPT_out_z_1.5.dat')
 	id=np.arange(data.shape[0])
 	#id=id[::20]  # downsample factor 
@@ -285,9 +291,9 @@ if __name__=='__main__':
 	ax.set_ylabel(r'log(ratio)', size=30)
 	#ax.set_ylim(.99,1.01)
 
-	#Delta=log(ZZ)-log(P)
+	Delta=log(ZZ)-log(P)
 	# plot the ratio of the original and roundtrip power spectrum 
-	#ax.plot(k,Delta, color='red', label='fftlog python' )
+	ax.plot(k,Delta, color='red', label='fftlog python' )
 	plt.grid()
 	
 	plt.show()

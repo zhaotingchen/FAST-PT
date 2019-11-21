@@ -1,8 +1,8 @@
 import numpy as np
-from J_table import J_table 
+from .J_table import J_table 
 import sys
 
-# Ordering is \alpha, \beta, l_1, l_2, l, A coeficient 
+# Ordering is \alpha, \beta, l_1, l_2, l, A coeficient
 l_mat_E= np.array([[0,0,0,0,0,16./81],\
 		[0,0,2,0,0,713./1134],\
 		[0,0,4,0,0,38./315],\
@@ -35,6 +35,5 @@ def IA_tt():
 	for i in range(l_mat_B.shape[0]):
 		xB=J_table(l_mat_B[i])
 		tableB=np.row_stack((tableB,xB))
-	
+
 	return tableE[1:,:] , tableB[1:,:]
-	
