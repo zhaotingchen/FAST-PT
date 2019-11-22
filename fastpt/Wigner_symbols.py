@@ -15,7 +15,11 @@
 '''
 
 import numpy as np
-from scipy.misc import factorial
+try:
+    from scipy.special import factorial
+except ImportError:
+    print('You are using an older version of scipy. Importing factorial from old location')
+    from scipy.misc import factorial
 import sys
 
 
