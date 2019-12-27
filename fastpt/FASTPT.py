@@ -564,7 +564,7 @@ class FASTPT:
         if (self.extrap):
             _, P_DBB = self.EK.PK_original(P_DBB)
 
-        return 2 * P_A, P_Btype2, 2 * P_DEE, 2 * P_DBB
+        return 2 * P_A, 4 * P_Btype2, 2 * P_DEE, 2 * P_DBB
 
     ## eq 18; eq 19; eq 27 EE; eq 27 BB
 
