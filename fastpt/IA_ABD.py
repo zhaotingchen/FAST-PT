@@ -25,11 +25,6 @@ def P_IA_B(k,P):
 	Z1_high=lambda r : ( (-16*r**4)/147. + (32*r**6)/441. - (16*r**8)/1617. - (64*r**10)/63063. - 16*r**12/63063. - (32*r**14)/357357. - (16*r**16)/415701. )/2.
 	Z1_low=lambda r: (-16./147 - 16/(415701.*r**12) - 32/(357357.*r**10) - 16/(63063.*r**8) - 64/(63063.*r**6) - 16/(1617.*r**4) + 32/(441.*r**2) )/2.
 
-	# #
-	# Z1 = Z1/2.
-	# Z1_high = Z1_high/2.
-	# Z1_low = Z1_low/2.
-
 	f_mid_low=Z1(exp(-mid_low_s))*exp(-mid_low_s)
 	f_mid_high=Z1(exp(-mid_high_s))*exp(-mid_high_s)
 	f_high = Z1_high(exp(-high_s))*exp(-high_s)
