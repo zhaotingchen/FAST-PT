@@ -6,10 +6,16 @@ utilizes Fourier methods combined with analytic expressions to reduce the
 computation time to scale as N log N, where N is the number of grid points in
 the input linear power spectrum.
 
-The FAST-PT way to get started:
+
+
+Easy installation with pip:
+
+* pip install fast-pt
+
+Full installation with examples:
 
 * Make sure you have current version of numpy, scipy, and matplotlib
-* download FAST-PT (or clone the repo)
+* download the latest FAST-PT release (or clone the repo)
 * install the repo: `python setup.py install`
 * run the example: `cd examples && python fastpt_example.py`
 * hopefully you get a plot!
