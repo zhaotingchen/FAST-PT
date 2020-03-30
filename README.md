@@ -10,7 +10,7 @@ the input linear power spectrum.
 
 Easy installation with pip:
 
-* pip install fast-pt
+* `pip install fast-pt`
 
 Full installation with examples:
 
