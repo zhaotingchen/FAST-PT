@@ -540,6 +540,10 @@ class FASTPT:
         return FQ1_ep,FQ2_ep,FQ5_ep,FQ8_ep,FQs2_ep,FR1_ep,FR2_ep,self.k_old,FR1,FR2
 
     def IA_tt(self, P, P_window=None, C_window=None):
+        """
+        hE^2 and hB^2
+        Returns 2.*P_E, 2.*P_B
+        """
 
         P_E, A = self.J_k_tensor(P, self.X_IA_E, P_window=P_window, C_window=C_window)
         if (self.extrap):
@@ -553,6 +557,9 @@ class FASTPT:
     ## eq 21 EE; eq 21 BB
 
     def IA_mix(self, P, P_window=None, C_window=None):
+        """
+        Returns 2*P_A, 4*P_Btype2, 2*P_DEE, 2*P_DBB
+        """
 
         P_A, A = self.J_k_tensor(P, self.X_IA_A, P_window=P_window, C_window=C_window)
         if (self.extrap):
@@ -573,6 +580,9 @@ class FASTPT:
     ## eq 18; eq 19; eq 27 EE; eq 27 BB
 
     def IA_ta(self, P, P_window=None, C_window=None):
+        """
+        Returns 2.*P_deltaE1, 2.*P_deltaE2, P_0E0E, P_0B0B
+        """
 
         P_deltaE1, A = self.J_k_tensor(P, self.X_IA_deltaE1, P_window=P_window, C_window=C_window)
         if (self.extrap):
@@ -778,6 +788,9 @@ class FASTPT:
         return P_out, A_out
 
     def J_k_tensor(self, P, X, P_window=None, C_window=None):
+        """
+        Basically executes eq. 2.22 from ArXiv 1609.05978v2.
+        """
 
         pf, p, nu1, nu2, g_m, g_n, h_l = X
 
