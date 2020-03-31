@@ -43,19 +43,21 @@ from numpy import exp, log, log10, cos, sin, pi, cosh, sinh, sqrt
 from scipy.special import gamma
 from scipy.signal import fftconvolve
 import scipy.integrate as integrate
+
 from .fastpt_extr import p_window, c_window, pad_left, pad_right
 from .matter_power_spt import P_13_reg, Y1_reg_NL, Y2_reg_NL
 from .initialize_params import scalar_stuff, tensor_stuff
 from .IA_tt import IA_tt
 from .IA_ABD import IA_A, IA_DEE, IA_DBB, P_IA_B
 from .IA_ta import IA_deltaE1, P_IA_deltaE2, IA_0E0E, IA_0B0B
+from .IA_tidal import IA_tidal
 from .OV import OV
 from .kPol import kPol
 from .RSD import RSDA, RSDB
 from . import RSD_ItypeII
 from .P_extend import k_extend
 from . import FASTPT_simple as fastpt_simple
-import pdb
+# import pdb
 
 ## WHEN DOES THE IMPORT STEP OCCUR? DO WE WANT TO MOVE SOME OF THESE TO THE INITIALIZATION BLOCK TO SAVE TIME ON LIGHT RUNS?
 
@@ -169,6 +171,7 @@ class FASTPT:
         self.IA_tt_do = False
         self.IA_ta_do = False
         self.IA_mix_do = False
+        self.IA_tidal_do = False
         self.OV_do = False
         self.kPol_do = False
         self.RSD_do = False
@@ -199,6 +202,9 @@ class FASTPT:
                 continue
             elif entry == 'IA_mix':
                 self.IA_mix_do = True
+                continue
+            elif entry=="IA_tidal":
+                self.IA_tidal_do=True
                 continue
             elif entry == 'OV':
                 self.OV_do = True
@@ -274,6 +280,14 @@ class FASTPT:
             self.X_IA_deltaE1 = tensor_stuff(p_mat_deltaE1, self.N, self.m, self.eta_m, self.l, self.tau_l)
             self.X_IA_0E0E = tensor_stuff(p_mat_0E0E, self.N, self.m, self.eta_m, self.l, self.tau_l)
             self.X_IA_0B0B = tensor_stuff(p_mat_0B0B, self.N, self.m, self.eta_m, self.l, self.tau_l)
+
+        if self.IA_tidal_do:
+            p_mat_K = tuple(ki[:, [0, 1, 5, 6, 7, 8, 9]] for ki in IA_tidal())
+            # Extracts the columns corresponding to the
+            # (alpha, beta, J1, J2, Jk, A, B) coefficients
+
+            self.X_tidal = tuple(tensor_stuff(p_mat_Ki, self.N,self.m,
+                self.eta_m, self.l, self.tau_l) for p_mat_Ki in p_mat_K)
 
         if self.OV_do:
             # For OV, we can use two different values for
@@ -587,6 +601,20 @@ class FASTPT:
         return 2. * P_deltaE1, 2. * P_deltaE2, P_0E0E, P_0B0B
 
     ## eq 12 (line 2); eq 12 (line 3); eq 15 EE; eq 15 BB
+
+    def IA_tidal(self, P, P_window=None, C_window=None):
+        """
+        Returns a list of arrays!
+        """
+
+        P_tidal = list()
+        for Xi in self.X_tidal:
+            P_X = self.J_k_tensor(P, Xi,P_window=P_window, C_window=C_window)[0]
+            if (self.extrap):
+                _, P_X = self.EK.PK_original(P_X)
+            P_tidal.append(P_X)
+
+        return P_tidal
 
     def OV(self, P, P_window=None, C_window=None):
         P, A = self.J_k_tensor(P, self.X_OV, P_window=P_window, C_window=C_window)
