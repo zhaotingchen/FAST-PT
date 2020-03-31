@@ -59,6 +59,7 @@ from . import RSD_ItypeII
 from .P_extend import k_extend
 from . import FASTPT_simple as fastpt_simple
 # import pdb
+from .J_table import J_table
 
 ## WHEN DOES THE IMPORT STEP OCCUR? DO WE WANT TO MOVE SOME OF THESE TO THE INITIALIZATION BLOCK TO SAVE TIME ON LIGHT RUNS?
 
@@ -332,6 +333,30 @@ class FASTPT:
             tabB, self.B_coeff = RSDB()
             p_mat = tabB[:, [0, 1, 5, 6, 7, 8, 9]]
             self.X_RSDB = tensor_stuff(p_mat, self.N, self.m, self.eta_m, self.l, self.tau_l)
+
+    def run_parameters(self, l_mat, P, P_window=None, C_window=None):
+        """
+        This method receives, in order, a matrix whose columns are the FAST-PT
+        coefficients ordered as (α, β, l₁, l₂, l, A), and the input power
+        spectrum, and then returns the corresponding power spectrum.
+        
+        The k, nu, etc... parameters are those of the current FASTPT object.
+        """
+
+        to_J = lambda matrix: np.vstack([J_table(row) for row in matrix])
+        J = to_J(l_mat)
+        X_mat = tensor_stuff(J[:, [0, 1, 5, 6, 7, 8, 9]],
+                                self.N,
+                                self.m,
+                                self.eta_m,
+                                self.l,
+                                self.tau_l)
+
+        Ps = self.J_k_tensor(P, X_mat, P_window=P_window, C_window=C_window)[0]
+        if (self.extrap):
+            __, Ps = self.EK.PK_original(Ps)
+
+        return Ps
 
     ### Top-level functions to output final quantities ###
     def one_loop_dd(self, P, P_window=None, C_window=None):
