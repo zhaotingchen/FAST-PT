@@ -51,6 +51,7 @@ from .IA_tt import IA_tt
 from .IA_ABD import IA_A, IA_DEE, IA_DBB, P_IA_B
 from .IA_ta import IA_deltaE1, P_IA_deltaE2, IA_0E0E, IA_0B0B
 from .IA_tidal import IA_tidal
+from LVDM import LVDM, LVDM_P13like
 from .OV import OV
 from .kPol import kPol
 from .RSD import RSDA, RSDB
@@ -172,6 +173,7 @@ class FASTPT:
         self.IA_ta_do = False
         self.IA_mix_do = False
         self.IA_tidal_do = False
+        self.LVDM_do = False
         self.OV_do = False
         self.kPol_do = False
         self.RSD_do = False
@@ -205,6 +207,9 @@ class FASTPT:
                 continue
             elif entry=="IA_tidal":
                 self.IA_tidal_do=True
+                continue
+            elif entry=="LVDM":
+                self.LVDM_do = True
                 continue
             elif entry == 'OV':
                 self.OV_do = True
@@ -287,6 +292,14 @@ class FASTPT:
             # (alpha, beta, J1, J2, Jk, A, B) coefficients
 
             self.X_tidal = tuple(tensor_stuff(p_mat_Ki, self.N,self.m,
+                self.eta_m, self.l, self.tau_l) for p_mat_Ki in p_mat_K)
+                
+        if self.LVDM_do:
+            p_mat_K = tuple(ki[:, [0, 1, 5, 6, 7, 8, 9]] for ki in LVDM())
+            # Extracts the columns corresponding to the
+            # (alpha, beta, J1, J2, Jk, A, B) coefficients
+
+            self.X_LVDM = tuple(tensor_stuff(p_mat_Ki, self.N,self.m,
                 self.eta_m, self.l, self.tau_l) for p_mat_Ki in p_mat_K)
 
         if self.OV_do:
@@ -615,6 +628,24 @@ class FASTPT:
             P_tidal.append(P_X)
 
         return P_tidal
+        
+    def LVDM(self, P, P_window=None, C_window=None):
+        """
+        Returns a list of arrays!
+        """
+        if not self.LVDM_do:
+            raise NameError("First execute FAST-PT with 'LVDM' in the to_do arg.")
+
+        P_LVDM = []
+        for Xi in self.X_LVDM:
+            P_X = self.J_k_tensor(P, Xi,P_window=P_window, C_window=C_window)[0]
+            if (self.extrap):
+                _, P_X = self.EK.PK_original(P_X)
+            P_LVDM.append(P_X)
+
+        P_LVDM.extend(LVDM_P13like(self.k_original, P))
+
+        return P_LVDM
 
     def OV(self, P, P_window=None, C_window=None):
         P, A = self.J_k_tensor(P, self.X_OV, P_window=P_window, C_window=C_window)
