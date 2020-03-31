@@ -89,6 +89,10 @@ class FASTPT:
             self.pt_simple = fastpt_simple.FASTPT(k, nu, param_mat=param_mat, low_extrap=low_extrap,
                                                   high_extrap=high_extrap, n_pad=n_pad, verbose=verbose)
             return None
+            
+        elif isinstance(to_do, str):
+            to_do = [to_do]
+            # So as to tolerate lonely strings
         # Exit initialization here, since fastpt_simple performs the various checks on the k grid and does extrapolation.
 
         # check for log spacing
