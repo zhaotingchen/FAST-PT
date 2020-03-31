@@ -185,48 +185,46 @@ class FASTPT:
         for entry in to_do:  # convert to_do list to instructions for FAST-PT initialization
             if entry == 'one_loop_dd':
                 self.dd_do = True
-                continue
 
-            if entry == 'one_loop_cleft_dd':
+            elif entry == 'one_loop_cleft_dd':
                 self.cleft = True
-                continue
 
             elif entry == 'dd_bias':
                 self.dd_do = True
                 self.dd_bias_do = True
-                continue
+
             elif entry == 'IA_all' or entry == 'IA':
                 self.IA_tt_do = True
                 self.IA_ta_do = True
                 self.IA_mix_do = True
-                continue
+
             elif entry == 'IA_tt':
                 self.IA_tt_do = True
-                continue
+
             elif entry == 'IA_ta':
                 self.IA_ta_do = True
-                continue
+
             elif entry == 'IA_mix':
                 self.IA_mix_do = True
-                continue
+
             elif entry=="IA_tidal":
                 self.IA_tidal_do=True
-                continue
+
             elif entry=="LVDM":
                 self.LVDM_do = True
-                continue
+
             elif entry == 'OV':
                 self.OV_do = True
-                continue
+
             elif entry == 'kPol':
                 self.kPol_do = True
-                continue
+
             elif entry == 'RSD':
                 self.RSD_do = True
-                continue
+
             elif entry == 'IRres':
                 self.dd_do = True
-                continue
+
             elif entry == 'all' or entry == 'everything':
                 self.dd_do = True
                 self.dd_bias_do = True
@@ -236,7 +234,7 @@ class FASTPT:
                 self.OV_do = True
                 self.kPol_do = True
                 self.RSD_do = True
-                continue
+
             else:
                 raise ValueError('FAST-PT does not recognize "' + entry + '" in the to_do list.')
 
