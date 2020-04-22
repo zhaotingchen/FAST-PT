@@ -238,7 +238,7 @@ def k_to_r(k,f_k,alpha_k=1.5, beta_r=-1.5, mu=.5, pf=(2*pi)**(-1.5),q=0):
 	r, A=fft_log(k,f_k,q,mu)
 
 	f_r=pf*A*r**beta_r 
-	
+
 	return r, f_r 
 	
 def r_to_k(r,f_r,alpha_k=-1.5, beta_r=1.5, mu=.5, pf=4*pi*np.sqrt(pi/2.),q=0):
