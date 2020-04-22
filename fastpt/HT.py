@@ -118,8 +118,8 @@ def fft_log(k,f_k,q,mu):
 		
 				
 	N=f_k.size
-	delta_L=(log(np.max(k))-log(np.min(k)))/(N-1)
-	delta_L10=(np.log10(np.max(k))-np.log10(np.min(k)))/(N-1)
+	delta_L=(log(np.max(k))-log(np.min(k)))/float(N-1)
+	#delta_L10=(np.log10(np.max(k))-np.log10(np.min(k)))/(N-1)
 	L=(log(np.max(k))-log(np.min(k)))
 		
 	# find a better way to check if it is evenly spaced in log 
@@ -208,7 +208,7 @@ def k_to_r(k,f_k,alpha_k, beta_r, mu, pf,q=0):
 
 	f_r=pf*A*r**beta_r 
 	t2=time()
-	#print('time to run ', t2-t1 )
+	# print('time to run ', t2-t1 )
 	return r, f_r 
 	
 def r_to_k(r,f_r,alpha_k, beta_r, mu, pf,q=0):
