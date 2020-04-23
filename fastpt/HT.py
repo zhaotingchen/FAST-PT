@@ -17,7 +17,7 @@
 	F(k)= \int_0^\infty f(r) (kr)^q J_\mu(kr) k dr 
 	f(r)= \int_0^\infty F(k) (kr)^{-q} J_\mu(kr) r dk . 
 	
-	Beaware of different definitions, for instance Wikipedie uses the 
+	Beaware of different definitions, for instance Wikipedia uses the 
 	following definitions: 
 	F(k)=\int_0^\infty f(r)  J_\mu(kr) r dr
 	f(r)= \int_0^\infty F(k)  J_\mu(kr) k dk . 
@@ -39,7 +39,11 @@ cut=200  # cutoff to switch to Gamma function limiting case (needed when argumen
          # gamma function is large) 
 
 def g_m_vals(mu,q):
-
+	"""
+	This function is copied from gamma_funcs.py in fastpt.
+	We repeat it so that HT.py is self-contained, requiring only
+	numpy and scipy.
+	"""
 	imag_q= np.imag(q)
 	
 	g_m=np.zeros(q.size, dtype=complex)
@@ -56,12 +60,7 @@ def g_m_vals(mu,q):
 	
 	g_m[(np.absolute(imag_q) <=cut) & (q!= mu + 1 + 0.0j)] =gamma(alpha_plus)/gamma(alpha_minus)
 
-	#g_m[np.absolute(imag_q)>cut] = exp( (asym_plus-0.5)*log(asym_plus) - (asym_minus-0.5)*log(asym_minus) - asym_q )
-	
-	#g_m[np.absolute(imag_q)>cut] = exp( (asym_plus-0.5)*log(asym_plus) - (asym_minus-0.5)*log(asym_minus) - asym_q \
-	#								+1./12 *(1./asym_plus - 1./asym_minus) +1./360.*(1./asym_minus**3 - 1./asym_plus**3) )
-	
-	# to higher order 								
+	# high-order expansion						
 	g_m[np.absolute(imag_q)>cut] = exp( (asym_plus-0.5)*log(asym_plus) - (asym_minus-0.5)*log(asym_minus) - asym_q \
 	    +1./12 *(1./asym_plus - 1./asym_minus) +1./360.*(1./asym_minus**3 - 1./asym_plus**3) +1./1260*(1./asym_plus**5 - 1./asym_minus**5) )
 
@@ -98,7 +97,7 @@ def get_k0(N,mu,q,r0,L,k0):
 	
 	return kr 
 	
-def u_m_vals(m,mu,q,kr,L):
+def u_m_vals_old(m,mu,q,kr,L):
 
 	x=q + 1j*2*pi*m/L
 	
@@ -120,7 +119,7 @@ def u_m_vals(m,mu,q,kr,L):
 	u_m[m.size-1]=np.real(u_m[m.size-1])
 	return u_m
 	
-def u_m_vals_new(m,mu,q,kr,L):
+def u_m_vals(m,mu,q,kr,L):
 
     omega=1j*2*pi*m/L
 
@@ -195,8 +194,8 @@ def fft_log(k,f_k,q,mu):
 	# get h array 	
 	h=delta_L*m + log_k0
 		
-	u_m=u_m_vals_new(m,mu,q,kr,L)
-	#u_m=u_m_vals(m,mu,q,kr,L) old version will crash for large data set 
+	u_m=u_m_vals(m,mu,q,kr,L)
+	#u_m=u_m_vals_old(m,mu,q,kr,L) old version will crash for large data set 
 
 	b=c_m*u_m
 		
