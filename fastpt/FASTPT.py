@@ -235,7 +235,7 @@ class FASTPT:
                 self.OV_do = True
                 self.kPol_do = True
                 self.RSD_do = True
-
+                self.cleft = True
             else:
                 raise ValueError('FAST-PT does not recognize "' + entry + '" in the to_do list.')
 
@@ -501,7 +501,7 @@ class FASTPT:
             _, sig3nl = self.EK.PK_original(sig3nl)
 
         #			return P_1loop, Pd1d2, Pd2d2, Pd1s2, Pd2s2, Ps2s2, sig4, Ps #original
-        return P_1loop, Ps, Pd1d2, Pd2d2, Pd1s2, Pd2s2, Ps2s2, sig3nl, sig4  # new,for consistency
+        return P_1loop, Ps, Pd1d2, Pd2d2, Pd1s2, Pd2s2, Ps2s2, sig4, sig3nl  # new,for consistency
 
     def one_loop_dd_bias_lpt_NL(self, P, P_window=None, C_window=None):
         nu_arr = -2
@@ -717,8 +717,7 @@ class FASTPT:
         B0 = np.dot(self.B_coeff[:, 0], B) + f * np.dot(self.B_coeff[:, 1], B) + f ** 2 * np.dot(self.B_coeff[:, 2], B)
         B2 = np.dot(self.B_coeff[:, 3], B) + f * np.dot(self.B_coeff[:, 4], B) + f ** 2 * np.dot(self.B_coeff[:, 5], B)
         B4 = np.dot(self.B_coeff[:, 6], B) + f * np.dot(self.B_coeff[:, 7], B) + f ** 2 * np.dot(self.B_coeff[:, 8], B)
-        B6 = np.dot(self.B_coeff[:, 9], B) + f * np.dot(self.B_coeff[:, 10], B) + f ** 2 * np.dot(self.B_coeff[:, 11],
-                                                                                                  B)
+        B6 = np.dot(self.B_coeff[:, 9], B) + f * np.dot(self.B_coeff[:, 10], B) + f ** 2 * np.dot(self.B_coeff[:, 11], B)
 
         if (self.extrap):
             _, A1 = self.EK.PK_original(A1)

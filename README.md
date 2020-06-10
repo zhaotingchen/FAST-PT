@@ -11,6 +11,7 @@ the input linear power spectrum.
 Easy installation with pip:
 
 * `pip install fast-pt`
+* Note: use `--no-deps` if you use a conda python distribution
 
 Full installation with examples:
 
@@ -20,7 +21,7 @@ Full installation with examples:
 * run the example: `cd examples && python fastpt_example.py`
 * hopefully you get a plot!
 
-See the [user manual](docs/user_manual.pdf) for more details.
+See the [user manual](docs/usr_manual.pdf) for more details.
 
 Our papers (JCAP 2016, 9, 15; arXiv:1603.04826) and (JCAP 2017, 2, 30; arXiv:1609.05978)
 describe the FAST-PT algorithm and implementation. Please cite these papers
