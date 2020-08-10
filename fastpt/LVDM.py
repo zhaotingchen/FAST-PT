@@ -51,8 +51,8 @@ each piece. The ordering remains the same.
 # Scipy modules
 import numpy as np
 # Local modules
-from J_table import J_table
-from Piece import P13likePiece
+from .J_table import J_table
+from .Piece import P13likePiece
 
 
 def LVDM_mat():
