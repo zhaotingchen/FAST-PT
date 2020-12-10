@@ -701,6 +701,45 @@ class FASTPT:
         out_1loop = self.one_loop_dd(P_in, P_window=P_window, C_window=C_window)[0]
         # p1loop = interpolate.InterpolatedUnivariateSpline(k,out_1loop) # is this necessary? out_1loop should already be at the correct k spacing
         return psmooth(k) + out_1loop + pw(k) * exp(-k ** 2 * Sigma) * (1 + Sigma * k ** 2)
+    
+    def one_loop_cs(self, P, P_window=None, C_window=None, cs2=0.0, khat=1.0):
+        # a function that returns 1-loop term with eft counterterm assuming Pade approximation.
+        k = self.k_original
+        P_SPT = self.one_loop_dd(P,C_window=C_window,P_window=P_window)[0]
+        P_cs = -cs2*k**2/(1+k**2/khat**2)*P
+        return P_SPT+P_cs
+    
+    def IRres_cs(self, P, L=0.2, rbao=110, P_window=None, C_window=None, cs2=0.0, khat=1.0):
+        # a function that returns IR resummed power spectrum with eft counterterm
+        from scipy import interpolate
+        k = self.k_original
+        kmin = k[0]
+        kmax = k[-1]
+        knode1 = pi / rbao
+        knode2 = 2 * pi / rbao
+        klogleft = np.arange(log(kmin), log(3.e-3), 0.2)
+        klogright = np.arange(log(0.6), log(kmax), 0.085)
+        klogright = np.hstack((log(knode1), log(knode2), klogright))
+        kloglist = np.concatenate((klogleft, klogright))
+        klist = np.exp(kloglist)
+        plin = interpolate.InterpolatedUnivariateSpline(k, P)
+        logPlin = np.log(plin(klist))
+        logpsmoothlin = interpolate.InterpolatedUnivariateSpline(kloglist, logPlin)
+        
+        def Sigma(ps):
+            result = integrate.quad(lambda x: (4 * pi) * ps(x) * 
+                                    (1 - 3 * (2 * rbao * x *cos (x * rbao) + (-2 + rbao ** 2 * x ** 2) * sin(rbao * x)) 
+                                     / (x * rbao) ** 3) / (3 * (2 * pi) ** 3), kmin, L)[0]
+            return result
+        
+        P_lin_w = plin(k) - exp(logpsmoothlin(log(k)))
+        P_1loop_nw = self.one_loop_cs(exp(logpsmoothlin(log(k))), P_window=P_window, 
+                                      C_window=C_window,cs2=cs2, khat=khat)
+        P_1loop_w = self.one_loop_cs(P, P_window=P_window, 
+                                     C_window=C_window,cs2=cs2, khat=khat) - P_1loop_nw
+        P_damp = exp(-k ** 2 * Sigma(plin)) * ((1 + Sigma(plin) * k ** 2)*P_lin_w+
+                                                P_1loop_w)
+        return P_damp + P_1loop_nw + exp(logpsmoothlin(log(k)))
 
     ######################################################################################
     ### functions that use the older version structures. ###
