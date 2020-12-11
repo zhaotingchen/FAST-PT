@@ -1,5 +1,13 @@
 # FAST-PT
 
+## EFT extension
+---------------
+This fork adds an effective counterterm to the 1-loop SPT power spectrum.
+Currently only real space 1-loop and IR resummation with this EFT term is added,
+with plans to extend it to redshift space.
+
+## Original README
+------------------
 FAST-PT is a code to calculate quantities in cosmological perturbation theory
 at 1-loop (including, e.g., corrections to the matter power spectrum). The code
 utilizes Fourier methods combined with analytic expressions to reduce the
